@@ -1,6 +1,10 @@
 # `expard`: Simulating and Fitting Exposure Models
 -----------------------------------------------
 
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/bips-hb/expard/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/bips-hb/expard/│actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
 `expard` constitutes an `R` package encompassing two primary functionalities:
 
 1. It serves as a simulator for electronic healthcare data, enabling the simulation of extensive patient populations observed across multiple time points. Leveraging `R`'s functional programming features, the package facilitates the straightforward specification of intricate relationships between drug exposures and adverse drug reactions (ADRs). These relationships may be contingent on various patient attributes such as sex, age, region, among others.
