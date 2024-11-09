@@ -67,18 +67,18 @@ print.drug_ADR_pair <- function(x, ...) {
   cat(sprintf("Drug: "))
   sapply(x$drug_history, function(x) {
     if (x == 1) {
-      cat(green(1))
+      cat(crayon::green(1))
     } else {
-      cat(blue("."))
+      cat(crayon::blue("."))
     }
   })
 
   cat(sprintf("\nADR:  "))
   sapply(x$adr_history, function(y) {
     if (y == 1) {
-      cat(red(1))
+      cat(crayon::red(1))
     } else {
-      cat(blue("."))
+      cat(crayon::blue("."))
     }
   })
 

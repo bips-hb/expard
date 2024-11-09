@@ -65,9 +65,7 @@ generate_patient <- function(simulation_time = 100,
 print.patient <- function(x, ...) {
   cat(sprintf("Patient\n"))
 
-  simulation_time
-
-  cat(sprintf("\nNo. of time points: %d\n\n", x$simulation_time))
+  cat(sprintf("\nNo. of time points: %d\n\n", x[["simulation_time"]]))
 
   lapply(1:length(x), function(i) {
     cat(sprintf("Drug-ADR pair %d\n", i))

@@ -36,14 +36,15 @@ plot_fit <- function(fit,
 
   # Use only the 'past-use' models for which the past parameter falls in the given range
   if (!is.null(past_values)) {
-    fit <- fit %>% dplyr::filter(model != 'past-use' | past %in% past_values)
+    fit <- fit |> dplyr::filter(model != 'past-use' | past %in% past_values)
   }
 
   # get the best BIC fit for each model
-  best_fit <- fit %>% group_by(model) %>%
-    dplyr::filter(BIC == min(BIC))  %>%
-    arrange(past) %>%
-    dplyr::filter(row_number() == 1) %>%
+  best_fit <- fit |>
+    group_by(model) |>
+    dplyr::filter(BIC == min(BIC))  |>
+    arrange(past) |>
+    dplyr::filter(row_number() == 1) |>
     arrange(BIC)
 
   # get the overall minimum and maximum BIC value

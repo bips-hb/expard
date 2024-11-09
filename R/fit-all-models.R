@@ -71,19 +71,19 @@ fit_all_models <- function(pair,
   # use the parameter setting of the model with the best BIC 
   min_BIC <- min(res$bestBIC)
   
-  r <-  res %>% 
-    group_by(model) %>% 
-    slice_min(n = 1, BIC) %>% 
+  r <-  res |> 
+    group_by(model) |> 
+    slice_min(n = 1, BIC) |> 
     mutate(delta_BIC = BIC - min_BIC)
   
   denominator <- sum(exp(-r$delta_BIC/2))
-  r <- r %>% mutate(
+  r <- r |> mutate(
     posterior = exp(-delta_BIC / 2) / denominator
   ) 
   
-  r <- r %>% dplyr::select(model, posterior)
+  r <- r |> dplyr::select(model, posterior)
   
   res <- full_join(r, res)
   
-  return(res %>% dplyr::arrange(-posterior))
+  return(res |> dplyr::arrange(-posterior))
 }

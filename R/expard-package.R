@@ -2,6 +2,9 @@
 "_PACKAGE"
 
 ## usethis namespace: start
+#' @importFrom crayon blue
+#' @importFrom crayon green
+#' @importFrom crayon red
 #' @importFrom Matrix Matrix
 #' @importFrom stats BIC
 #' @importFrom stats dnorm
