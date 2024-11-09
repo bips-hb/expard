@@ -39,9 +39,11 @@ The probability depends on the drug prescriptions,
 the ADR history and the \code{drug_model}.
 }
 \examples{
-generate_drug_history(simulation_time = 10, 
-                      min_chance = .1,
-                      avg_duration = 5
-                      guaranteed_exposed = TRUE)
+generate_drug_history(
+  simulation_time = 10,
+  min_chance = .1,
+  avg_duration = 5,
+  guaranteed_exposed = TRUE
+)
 }
 \concept{Update functions}

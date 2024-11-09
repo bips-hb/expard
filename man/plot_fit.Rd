@@ -29,5 +29,5 @@ ggplot
 }
 \description{
 Plots the BIC for the different risk models that were fitted by the
-function \code{\link{fit_all_models}}.
+function \code{\link[=fit_all_models]{fit_all_models()}}.
 }

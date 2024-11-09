@@ -6,6 +6,7 @@
 #' @importFrom crayon green
 #' @importFrom crayon red
 #' @importFrom Matrix Matrix
+#' @importFrom rlang .data
 #' @importFrom stats BIC
 #' @importFrom stats dnorm
 #' @importFrom stats optim

@@ -1,13 +1,13 @@
 #' Plot the Fit
 #'
 #' Plots the BIC for the different risk models that were fitted by the
-#' function \code{\link{fit_all_models}}.
+#' function [fit_all_models()].
 #'
 #' @param fit The fit
 #' @param x_label The x-label for the plot
 #' @param title The plot title
 #' @param y_range Used as minimum for the y axis. Guessed if not provided.
-#' @param past_values If not \code{NULL}, a select number of values for past are
+#' @param past_values If not `NULL`, a select number of values for past are
 #'             used for the plot
 #'
 #' @return ggplot
@@ -39,11 +39,12 @@ plot_fit <- function(fit,
 
   # get the best BIC fit for each model
   best_fit <- fit |>
-    group_by(model) |>
-    dplyr::filter(BIC == min(BIC)) |>
-    arrange(past) |>
-    dplyr::filter(row_number() == 1) |>
-    arrange(BIC)
+    dplyr::group_by(model) |>
+    dplyr::slice_min(.data$BIC) |>
+    #dplyr::filter(BIC == min(BIC)) |>
+    dplyr::arrange(past) |>
+    dplyr::filter(dplyr::row_number() == 1) |>
+    dplyr::arrange(.data$BIC)
 
   # get the overall minimum and maximum BIC value
   min_BIC <- min(best_fit$BIC)
@@ -65,14 +66,20 @@ plot_fit <- function(fit,
   })
 
   # plot just the best fit
-  ggplot(best_fit) +
-    geom_bar(aes(x = stats::reorder(model, BIC), y = BIC), stat = "identity") +
-    coord_cartesian(ylim = y_range) +
-    ggtitle(title) +
+  ggplot2::ggplot(best_fit) +
+    ggplot2::geom_bar(
+      ggplot2::aes(
+        x = stats::reorder(.data$model, .data$BIC),
+        y = .data$BIC
+      ),
+      stat = "identity") +
+    ggplot2::coord_cartesian(ylim = y_range) +
+    ggplot2::labs(title = title, x = x_label) +
     # scale_y_continuous(expand = expansion(mult = c(0.1, .1))) + #expand = c(0, 100)) +
-    theme_bw() +
-    theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1)) +
-    xlab(x_label)
+    ggplot2::theme_bw() +
+    ggplot2::theme(
+      axis.text.x = ggplot2::element_text(angle = 45, vjust = 1, hjust = 1)
+    )
 
   # plot just the best fit
   # ggplot(best_fit) +

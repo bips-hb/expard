@@ -82,11 +82,14 @@
 #' create2x2table(cohort, method = "drug-era")
 #' create2x2table(cohort, method = "patient")
 #' @export
-create2x2table <- function(drug_ADR_pair, method = c(
-                             "time-point",
-                             "drug-era",
-                             "patient"
-                           )) {
+create2x2table <- function(
+    drug_ADR_pair,
+    method = c(
+      "time-point",
+      "drug-era",
+      "patient"
+    )
+) {
   if (!(method[1] %in% c("time-point", "drug-era", "patient"))) {
     stop(sprintf(
       "method should be either '%s', '%s' or '%s'",
@@ -95,17 +98,17 @@ create2x2table <- function(drug_ADR_pair, method = c(
   }
 
   # initialize tables
-  table <- list(a = 0, b = 0, c = 0, d = 0, method = method[1])
-  class(table) <- "cont_table"
+  out_table <- list(a = 0, b = 0, c = 0, d = 0, method = method[1])
+  class(out_table) <- "cont_table"
 
   if (method[1] == "time-point") {
     drug <- drug_ADR_pair$drug_history == 1
     ADR <- drug_ADR_pair$adr_history == 1
 
-    table$a <- sum(drug & ADR, na.rm = TRUE)
-    table$b <- sum(!drug & ADR, na.rm = TRUE)
-    table$c <- sum(drug & !ADR, na.rm = TRUE)
-    table$d <- sum(!drug & !ADR, na.rm = TRUE)
+    out_table$a <- sum(drug & ADR, na.rm = TRUE)
+    out_table$b <- sum(!drug & ADR, na.rm = TRUE)
+    out_table$c <- sum(drug & !ADR, na.rm = TRUE)
+    out_table$d <- sum(!drug & !ADR, na.rm = TRUE)
   }
 
   if (method[1] == "patient") {
@@ -113,14 +116,14 @@ create2x2table <- function(drug_ADR_pair, method = c(
     drug <- rowSums(as.matrix(drug_ADR_pair$drug_history), na.rm = TRUE) > 0
     ADR <- rowSums(as.matrix(drug_ADR_pair$adr_history), na.rm = TRUE) > 0
 
-    table$a <- sum(drug & ADR, na.rm = TRUE)
-    table$b <- sum(!drug & ADR, na.rm = TRUE)
-    table$c <- sum(drug & !ADR, na.rm = TRUE)
-    table$d <- sum(!drug & !ADR, na.rm = TRUE)
+    out_table$a <- sum(drug & ADR, na.rm = TRUE)
+    out_table$b <- sum(!drug & ADR, na.rm = TRUE)
+    out_table$c <- sum(drug & !ADR, na.rm = TRUE)
+    out_table$d <- sum(!drug & !ADR, na.rm = TRUE)
   }
 
   if (method[1] == "drug-era") {
-    sapply(1:cohort$n_patients, function(k) {
+    sapply(1:drug_ADR_pair$n_patients, function(k) {
       # remove any none observed time points. They are represented by NAs
       indices_observed_time_points_drug <- which(!is.na(drug_ADR_pair$drug_history[k, ]))
       indices_observed_time_points_adr <- which(!is.na(drug_ADR_pair$adr_history[k, ]))
@@ -152,9 +155,9 @@ create2x2table <- function(drug_ADR_pair, method = c(
             # switch from a drug-era to a non-drug era
             in_drug_era <- FALSE
             if (ADR_happened) {
-              table$a <<- table$a + 1
+              out_table$a <<- out_table$a + 1
             } else {
-              table$c <<- table$c + 1
+              out_table$c <<- out_table$c + 1
             }
           }
         } else {
@@ -169,9 +172,9 @@ create2x2table <- function(drug_ADR_pair, method = c(
             # switch from a non-drug-era to a drug era
             in_drug_era <- TRUE
             if (ADR_happened) {
-              table$b <<- table$b + 1
+              out_table$b <<- out_table$b + 1
             } else {
-              table$d <<- table$d + 1
+              out_table$d <<- out_table$d + 1
             }
           }
         }
@@ -181,9 +184,9 @@ create2x2table <- function(drug_ADR_pair, method = c(
   }
 
 
-  table$n <- table$a + table$b + table$c + table$d
+  out_table$n <- out_table$a + out_table$b + out_table$c + out_table$d
 
-  return(table)
+  return(out_table)
 }
 
 #' Print function for 2x2 tables

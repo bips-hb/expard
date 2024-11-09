@@ -97,7 +97,7 @@ generate_cohort <- function(n_patients = 100,
 #' @param x A \code{cohort} object.
 #' @param ... Unused.
 #' @export
-print.cohort <- function(x, ..) {
+print.cohort <- function(x, ...) {
   cat("Cohort\n\n")
   cat(sprintf("  No. patients:\t\t%d\n", x$n_patients))
   cat(sprintf("  No. drug-ADR-pairs:\t%d\n", x$n_drug_ADR_pairs))

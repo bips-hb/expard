@@ -61,7 +61,7 @@ risk_model_no_association <- function() {
 #' @family Risk models
 #' @examples
 #' drug_history <- c(1, 0, 1, 0, 0)
-#' risk_model <- risk_model_immediate()
+#' risk_model <- risk_model_withdrawal(rate = 3)
 #' risk_model(drug_history)
 #' @export
 risk_model_current_use <- function() {

@@ -49,7 +49,7 @@
 #' cohort <- expard::generate_cohort(
 #'   n_patients = 1000,
 #'   simulation_time = 100,
-#'   risk_model = expard::risk_model_immediate(),
+#'   risk_model = expard::risk_model_withdrawal(rate = 3),
 #'   verbose = TRUE,
 #'   min_chance_drug = probability_model_constant(.3),
 #'   max_chance_drug = probability_model_constant(.7),
@@ -60,7 +60,7 @@
 #' fit_model(cohort, risk_model = expard::risk_model_no_effect())
 #'
 #' # fit the true immediate effect model
-#' fit_model(cohort, risk_model = expard::risk_model_immediate())
+#' fit_model(cohort, risk_model = expard::risk_model_withdrawal(rate = 3))
 #' # note that the estimators are close to the truth (.3 and .6)
 #' @export
 fit_model <- function(pair,

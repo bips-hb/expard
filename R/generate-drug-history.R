@@ -26,12 +26,14 @@
 #'   guaranteed_exposed = TRUE
 #' )
 #' @export
-generate_drug_history <- function(simulation_time = 10,
-                                  min_chance,
-                                  avg_duration = 5,
-                                  max_chance = NULL,
-                                  guaranteed_exposed = TRUE,
-                                  ...) {
+generate_drug_history <- function(
+    simulation_time = 10,
+    min_chance,
+    avg_duration = 5,
+    max_chance = NULL,
+    guaranteed_exposed = TRUE,
+    ...
+) {
   if (avg_duration < 1) {
     stop("avg duration must be at least 1")
   }

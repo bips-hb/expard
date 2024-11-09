@@ -21,7 +21,7 @@ exposed.
 }
 \examples{
 drug_history <- c(1, 0, 1, 0, 0)
-risk_model <- risk_model_immediate()
+risk_model <- risk_model_withdrawal(rate = 3)
 risk_model(drug_history)
 }
 \seealso{
