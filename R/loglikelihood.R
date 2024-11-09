@@ -15,13 +15,12 @@
 loglikelihood <- function(betas,
                           risks,
                           adr_history) {
-
   # extract parameters
   beta0 <- betas[1]
   beta <- betas[2]
 
   P <- exp(beta0 + risks * beta) / (1 + exp(beta0 + risks * beta))
-  -1 * sum( adr_history * log(P) + (1 - adr_history)*log(1 - P))
+  -1 * sum(adr_history * log(P) + (1 - adr_history) * log(1 - P))
 }
 
 
@@ -31,7 +30,6 @@ loglikelihood_past <- function(param,
                                past,
                                drug_history,
                                adr_history) {
-
   # extract parameters
   beta0 <- param[1]
   beta <- param[2]
@@ -51,10 +49,10 @@ loglikelihood_past <- function(param,
     risks[i, ] <- risk_model(drug_history[i, ])
   }
 
-  #risks <- Matrix(apply(drug_history, 1, function(d) risk_model(d)))
+  # risks <- Matrix(apply(drug_history, 1, function(d) risk_model(d)))
 
   P <- exp(beta0 + risks * beta) / (1 + exp(beta0 + risks * beta))
-  -1 * sum( adr_history * log(P) + (1 - adr_history)*log(1 - P))
+  -1 * sum(adr_history * log(P) + (1 - adr_history) * log(1 - P))
 }
 
 #' @param param Vector with parameters.
@@ -62,8 +60,7 @@ loglikelihood_past <- function(param,
 #' @export
 #' @rdname loglikelihood
 loglikelihood_withdrawal <- function(param,
-                            freq_table) {
-
+                                     freq_table) {
   # extract parameters
   beta0 <- param[1]
   beta <- param[2]
@@ -90,9 +87,10 @@ loglikelihood_withdrawal <- function(param,
   freq_table$risk_value[1] <- 0
 
   # determine the log-likelihood given the risks
-  freq_table <- freq_table |> rowwise() |>
-    mutate(loglikelihood = -1*(n_adr*log((pi1 - pi0)*risk_value + pi0) +
-                                 n_no_adr * log(1 - (pi1 - pi0)*risk_value - pi0)))
+  freq_table <- freq_table |>
+    rowwise() |>
+    mutate(loglikelihood = -1 * (n_adr * log((pi1 - pi0) * risk_value + pi0) +
+      n_no_adr * log(1 - (pi1 - pi0) * risk_value - pi0)))
 
   sum(freq_table$loglikelihood)
 }
@@ -103,7 +101,6 @@ loglikelihood_withdrawal <- function(param,
 #' @rdname loglikelihood
 loglikelihood_delayed <- function(param,
                                   freq_table) {
-
   # extract parameters
   beta0 <- param[1]
   beta <- param[2]
@@ -130,9 +127,10 @@ loglikelihood_delayed <- function(param,
   freq_table$risk_value[1] <- 0
 
   # determine the log-likelihood given the risks
-  freq_table <- freq_table |> rowwise() |>
-    mutate(loglikelihood = -1*(n_adr*log((pi1 - pi0)*risk_value + pi0) +
-                                 n_no_adr * log(1 - (pi1 - pi0)*risk_value - pi0)))
+  freq_table <- freq_table |>
+    rowwise() |>
+    mutate(loglikelihood = -1 * (n_adr * log((pi1 - pi0) * risk_value + pi0) +
+      n_no_adr * log(1 - (pi1 - pi0) * risk_value - pi0)))
 
   sum(freq_table$loglikelihood)
 }
@@ -141,7 +139,6 @@ loglikelihood_delayed <- function(param,
 #' @rdname loglikelihood
 loglikelihood_decaying <- function(param,
                                    freq_table) {
-
   # extract parameters
   beta0 <- param[1]
   beta <- param[2]
@@ -155,7 +152,7 @@ loglikelihood_decaying <- function(param,
   # determine the risks given the time_since last exposure and the rate
   # of the withdrawal model
   freq_table <- freq_table |> mutate(
-    #risk_value = exp(-rate * (unique_value - 1))
+    # risk_value = exp(-rate * (unique_value - 1))
     risk_value = exp(-rate * (unique_value - 1))
   )
 
@@ -164,9 +161,10 @@ loglikelihood_decaying <- function(param,
   freq_table$risk_value[1] <- 0
 
   # determine the log-likelihood given the risks
-  freq_table <- freq_table |> rowwise() |>
-    mutate(loglikelihood = -1*(n_adr*log((pi1 - pi0)*risk_value + pi0) +
-                                 n_no_adr * log(1 - (pi1 - pi0)*risk_value - pi0)))
+  freq_table <- freq_table |>
+    rowwise() |>
+    mutate(loglikelihood = -1 * (n_adr * log((pi1 - pi0) * risk_value + pi0) +
+      n_no_adr * log(1 - (pi1 - pi0) * risk_value - pi0)))
 
   sum(freq_table$loglikelihood)
 }
@@ -175,8 +173,7 @@ loglikelihood_decaying <- function(param,
 #' @export
 #' @rdname loglikelihood
 loglikelihood_delayed_decaying <- function(param,
-                                  freq_table) {
-
+                                           freq_table) {
   # extract parameters
   beta0 <- param[1]
   beta <- param[2]
@@ -191,8 +188,8 @@ loglikelihood_delayed_decaying <- function(param,
   sigma <- exp(sigma_log)
   rate <- exp(rate_log)
 
-  #combination <- delay(drug_history) + decay(drug_history)
-  #combination / max(combination)
+  # combination <- delay(drug_history) + decay(drug_history)
+  # combination / max(combination)
 
   # to make sure that the highest value is indeed 1
   normalizing_factor <- dnorm(mu, mu, sigma)
@@ -200,7 +197,7 @@ loglikelihood_delayed_decaying <- function(param,
   # determine the risks given the time_since last exposure and the rate
   # of the withdrawal model
   freq_table <- freq_table |> mutate(
-    #risk_value = exp(-rate * (unique_value - 1))
+    # risk_value = exp(-rate * (unique_value - 1))
     risk_value_delayed = dnorm(unique_value, mu, sigma) / normalizing_factor,
     risk_value_decaying = exp(-rate * (unique_value - 1)),
     risk_value = (risk_value_delayed + risk_value_decaying) / max(risk_value_delayed + risk_value_decaying)
@@ -211,21 +208,21 @@ loglikelihood_delayed_decaying <- function(param,
   freq_table$risk_value[1] <- 0
 
   # determine the log-likelihood given the risks
-  freq_table <- freq_table |> rowwise() |>
-    mutate(loglikelihood = -1*(n_adr*log((pi1 - pi0)*risk_value + pi0) +
-                                 n_no_adr * log(1 - (pi1 - pi0)*risk_value - pi0)))
+  freq_table <- freq_table |>
+    rowwise() |>
+    mutate(loglikelihood = -1 * (n_adr * log((pi1 - pi0) * risk_value + pi0) +
+      n_no_adr * log(1 - (pi1 - pi0) * risk_value - pi0)))
 
   sum(freq_table$loglikelihood)
 }
 
 
-#risk_model_long_term <- function(rate, delay)
+# risk_model_long_term <- function(rate, delay)
 
 #' @export
 #' @rdname loglikelihood
 loglikelihood_long_term <- function(param,
                                     freq_table) {
-
   # extract parameters
   beta0 <- param[1]
   beta <- param[2]
@@ -241,7 +238,7 @@ loglikelihood_long_term <- function(param,
   # determine the risks given the time_since last exposure and the rate
   # of the withdrawal model
   freq_table <- freq_table |> mutate(
-    #risk_value = exp(-rate * (unique_value - 1))
+    # risk_value = exp(-rate * (unique_value - 1))
     risk_value = 1 / (1 + exp(-rate * (unique_value - delay)))
   )
 
@@ -250,9 +247,10 @@ loglikelihood_long_term <- function(param,
   freq_table$risk_value[1] <- 0
 
   # determine the log-likelihood given the risks
-  freq_table <- freq_table |> rowwise() |>
-    mutate(loglikelihood = -1*(n_adr*log((pi1 - pi0)*risk_value + pi0) +
-                                 n_no_adr * log(1 - (pi1 - pi0)*risk_value - pi0)))
+  freq_table <- freq_table |>
+    rowwise() |>
+    mutate(loglikelihood = -1 * (n_adr * log((pi1 - pi0) * risk_value + pi0) +
+      n_no_adr * log(1 - (pi1 - pi0) * risk_value - pi0)))
 
   sum(freq_table$loglikelihood)
 }

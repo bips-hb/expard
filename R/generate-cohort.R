@@ -24,10 +24,9 @@ generate_cohort <- function(n_patients = 100,
                             avg_duration = rep(5, n_drug_ADR_pairs),
                             max_chance_drug = rep(NULL, n_drug_ADR_pairs),
                             prob_guaranteed_exposed = rep(1, n_drug_ADR_pairs),
-                            min_chance  = rep(.1, n_drug_ADR_pairs),
-                            max_chance  = rep(.4, n_drug_ADR_pairs),
+                            min_chance = rep(.1, n_drug_ADR_pairs),
+                            max_chance = rep(.4, n_drug_ADR_pairs),
                             verbose = FALSE) {
-
   if (verbose) {
     cat("Generating the patients...\n")
     pb <- txtProgressBar(min = 0, max = n_patients, style = 3)
@@ -35,7 +34,6 @@ generate_cohort <- function(n_patients = 100,
 
   # generate patients
   patients <- lapply(1:n_patients, function(i) {
-
     guaranteed_exp <- rbinom(n_drug_ADR_pairs, 1, prob_guaranteed_exposed)
 
     patient <- generate_patient(
@@ -67,7 +65,7 @@ generate_cohort <- function(n_patients = 100,
     adr_history <- drug_history
 
     sapply(1:n_patients, function(p) {
-      #print(patients[[p]][[i]])
+      # print(patients[[p]][[i]])
       drug_history[p, ] <<- patients[[p]][[i]]$drug_history
       adr_history[p, ] <<- patients[[p]][[i]]$adr_history
     })
@@ -76,8 +74,10 @@ generate_cohort <- function(n_patients = 100,
       setTxtProgressBar(pb, i)
     }
 
-    list(drug_history = Matrix(drug_history, sparse = TRUE),
-         adr_history = Matrix(adr_history, sparse = TRUE))
+    list(
+      drug_history = Matrix(drug_history, sparse = TRUE),
+      adr_history = Matrix(adr_history, sparse = TRUE)
+    )
   })
 
   if (verbose) {
@@ -98,7 +98,6 @@ generate_cohort <- function(n_patients = 100,
 #' @param ... Unused.
 #' @export
 print.cohort <- function(x, ..) {
-
   cat("Cohort\n\n")
   cat(sprintf("  No. patients:\t\t%d\n", x$n_patients))
   cat(sprintf("  No. drug-ADR-pairs:\t%d\n", x$n_drug_ADR_pairs))

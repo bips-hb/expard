@@ -39,20 +39,20 @@ generate_patient <- function(simulation_time = 100,
                              avg_duration = rep(5, n_drug_ADR_pairs),
                              max_chance_drug = rep(NULL, n_drug_ADR_pairs),
                              guaranteed_exposed = rep(TRUE, n_drug_ADR_pairs),
-                             min_chance  = rep(.1, n_drug_ADR_pairs),
-                             max_chance  = rep(.4, n_drug_ADR_pairs)) {
-
+                             min_chance = rep(.1, n_drug_ADR_pairs),
+                             max_chance = rep(.4, n_drug_ADR_pairs)) {
   res <- lapply(1:n_drug_ADR_pairs, function(i) {
-
-    generate_drug_ADR_pair(simulation_time = simulation_time,
-                           eval( parse(text = risk_model[i]) ),
-                           min_chance_drug[i],
-                           avg_duration[i],
-                           max_chance_drug[i],
-                           guaranteed_exposed[i],
-                           min_chance[i],
-                           max_chance[i])
-    })
+    generate_drug_ADR_pair(
+      simulation_time = simulation_time,
+      eval(parse(text = risk_model[i])),
+      min_chance_drug[i],
+      avg_duration[i],
+      max_chance_drug[i],
+      guaranteed_exposed[i],
+      min_chance[i],
+      max_chance[i]
+    )
+  })
 
   class(res) <- c(class(res), "patient")
   return(res)

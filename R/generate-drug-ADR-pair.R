@@ -34,14 +34,13 @@ generate_drug_ADR_pair <- function(simulation_time = 100,
                                    avg_duration = 5,
                                    max_chance_drug = NULL,
                                    guaranteed_exposed = TRUE,
-                                   min_chance  = .1,
-                                   max_chance  = .4)
-{
-
-
-  drug_history <- generate_drug_history(simulation_time, min_chance_drug,
-                                        avg_duration, max_chance_drug,
-                                        guaranteed_exposed)
+                                   min_chance = .1,
+                                   max_chance = .4) {
+  drug_history <- generate_drug_history(
+    simulation_time, min_chance_drug,
+    avg_duration, max_chance_drug,
+    guaranteed_exposed
+  )
 
 
   adr_history <- generate_adr_history(drug_history, risk_model, min_chance, max_chance)
@@ -61,7 +60,6 @@ generate_drug_ADR_pair <- function(simulation_time = 100,
 #' @param ... Unused.
 #' @export
 print.drug_ADR_pair <- function(x, ...) {
-
   simulation_time <- length(x$drug_history)
 
   cat(sprintf("Drug: "))

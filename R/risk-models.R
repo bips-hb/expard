@@ -10,14 +10,16 @@
 ##############################################
 
 #
-risk_models <- c('no-association',
-                 'current-use',
-                 'past-use',
-                 'withdrawal',
-                 'delayed',
-                 'decaying',
-                 'delayed+decaying',
-                 'long-term')
+risk_models <- c(
+  "no-association",
+  "current-use",
+  "past-use",
+  "withdrawal",
+  "delayed",
+  "decaying",
+  "delayed+decaying",
+  "long-term"
+)
 
 
 #' Risk Model 'No Association'
@@ -96,18 +98,16 @@ risk_model_current_use <- function() {
 #' risk_model(drug_history)
 #' @export
 risk_model_past <- function(past) {
-
   # check correctness input
   if (past <= 0) {
     stop("past should be > 0")
   }
 
   function(drug_history, ...) {
-
     simulation_time <- length(drug_history)
 
     sapply(1:simulation_time, function(t) {
-      as.numeric( any(drug_history[max(1,t-past):t] != 0))
+      as.numeric(any(drug_history[max(1, t - past):t] != 0))
     })
   }
 }
@@ -140,18 +140,16 @@ risk_model_past <- function(past) {
 #' risk_model(drug_history)
 #' @export
 risk_model_duration <- function(duration) {
-
   # check correctness input
   if (duration <= 0) {
     stop("duration should be > 0")
   }
 
   function(drug_history, ...) {
-
     simulation_time <- length(drug_history)
 
     sapply(1:simulation_time, function(t) {
-      as.numeric( sum(drug_history[1:t]) >= duration )
+      as.numeric(sum(drug_history[1:t]) >= duration)
     })
   }
 }
@@ -184,14 +182,12 @@ risk_model_duration <- function(duration) {
 #' risk_model(drug_history)
 #' @export
 risk_model_withdrawal <- function(rate) {
-
   # check correctness input
   if (rate <= 0) {
     stop("rate should be > 0")
   }
 
   function(drug_history, ...) {
-
     simulation_time <- length(drug_history)
 
     # never took the drug
@@ -205,7 +201,7 @@ risk_model_withdrawal <- function(rate) {
       if (drug_history[t] == 1 || sum(drug_history[1:t]) == 0) {
         return(0)
       } else {
-        time_steps_ago = t - max(which(drug_history[1:t] == 1))
+        time_steps_ago <- t - max(which(drug_history[1:t] == 1))
         return(exp(-rate * (time_steps_ago - 1)))
       }
     })
@@ -229,11 +225,10 @@ risk_model_withdrawal <- function(rate) {
 #' risk_model(drug_history)
 #' @export
 risk_model_delayed <- function(mu, sigma) {
-
   # check correctness input
   if (mu <= 0) {
     mu <- 1e-10
-    #stop("mu should be > 0")
+    # stop("mu should be > 0")
   }
 
   if (sigma <= 0) {
@@ -244,7 +239,6 @@ risk_model_delayed <- function(mu, sigma) {
   normalizing_factor <- dnorm(mu, mu, sigma)
 
   function(drug_history, ...) {
-
     simulation_time <- length(drug_history)
 
     # never took the drug
@@ -258,7 +252,7 @@ risk_model_delayed <- function(mu, sigma) {
       if (sum(drug_history[1:t]) == 0) {
         return(0)
       } else {
-        time_steps_ago = t - min(which(drug_history[1:t] == 1))
+        time_steps_ago <- t - min(which(drug_history[1:t] == 1))
         return(dnorm(time_steps_ago, mu, sigma) / normalizing_factor)
       }
     })
@@ -278,16 +272,14 @@ risk_model_delayed <- function(mu, sigma) {
 #' risk_model(drug_history)
 #' @export
 risk_model_decaying <- function(rate) {
-
   # check correctness input
   if (rate <= 0) {
     stop("rate should be > 0")
   }
 
-  #normalizing_factor <- exp(-rate * (time_steps_ago - 1))
+  # normalizing_factor <- exp(-rate * (time_steps_ago - 1))
 
   function(drug_history, ...) {
-
     simulation_time <- length(drug_history)
 
     # never took the drug
@@ -301,7 +293,7 @@ risk_model_decaying <- function(rate) {
       if (sum(drug_history[1:t]) == 0) {
         return(0)
       } else {
-        time_steps_ago = t - min(which(drug_history[1:t] == 1))
+        time_steps_ago <- t - min(which(drug_history[1:t] == 1))
         return(exp(-rate * time_steps_ago))
       }
     })
@@ -313,7 +305,6 @@ risk_model_decaying <- function(rate) {
 #' @export
 #' @rdname risk_model_decaying
 risk_model_delayed_decaying <- function(mu, sigma, rate) {
-
   # check correctness input
   if (rate <= 0) {
     stop("rate should be > 0")
@@ -321,7 +312,7 @@ risk_model_delayed_decaying <- function(mu, sigma, rate) {
 
   if (mu <= 0) {
     mu <- 1e-10
-    #stop("mu should be > 0")
+    # stop("mu should be > 0")
   }
 
   if (sigma <= 0) {
@@ -331,7 +322,7 @@ risk_model_delayed_decaying <- function(mu, sigma, rate) {
   delay <- risk_model_delayed(mu, sigma)
   decay <- risk_model_decaying(rate)
 
-  #normalizing_factor <- exp(-rate * (time_steps_ago - 1))
+  # normalizing_factor <- exp(-rate * (time_steps_ago - 1))
 
   function(drug_history, ...) {
     if (sum(drug_history) == 0) {
@@ -378,7 +369,6 @@ risk_model_delayed_decaying <- function(mu, sigma, rate) {
 #' @export
 risk_model_long_term <- function(rate, delay) {
   function(drug_history, ...) {
-
     simulation_time <- length(drug_history)
 
     # moment of first prescription
@@ -388,7 +378,7 @@ risk_model_long_term <- function(rate, delay) {
         return(0)
       } else {
         # moment of first prescription
-        time_since_first_prescription = t - min(which(drug_history[1:t] == 1))
+        time_since_first_prescription <- t - min(which(drug_history[1:t] == 1))
 
         # use a sigmoid function to determine the effect
         return(1 / (1 + exp(-rate * (time_since_first_prescription - delay))))

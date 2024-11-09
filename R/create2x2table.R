@@ -82,13 +82,16 @@
 #' create2x2table(cohort, method = "drug-era")
 #' create2x2table(cohort, method = "patient")
 #' @export
-create2x2table <- function(drug_ADR_pair, method = c("time-point",
-                                                     "drug-era",
-                                                     "patient")) {
-
+create2x2table <- function(drug_ADR_pair, method = c(
+                             "time-point",
+                             "drug-era",
+                             "patient"
+                           )) {
   if (!(method[1] %in% c("time-point", "drug-era", "patient"))) {
-    stop(sprintf("method should be either '%s', '%s' or '%s'",
-                 "time-point", "drug-era", "patient"))
+    stop(sprintf(
+      "method should be either '%s', '%s' or '%s'",
+      "time-point", "drug-era", "patient"
+    ))
   }
 
   # initialize tables
@@ -96,7 +99,6 @@ create2x2table <- function(drug_ADR_pair, method = c("time-point",
   class(table) <- "cont_table"
 
   if (method[1] == "time-point") {
-
     drug <- drug_ADR_pair$drug_history == 1
     ADR <- drug_ADR_pair$adr_history == 1
 
@@ -118,11 +120,7 @@ create2x2table <- function(drug_ADR_pair, method = c("time-point",
   }
 
   if (method[1] == "drug-era") {
-
-
-
     sapply(1:cohort$n_patients, function(k) {
-
       # remove any none observed time points. They are represented by NAs
       indices_observed_time_points_drug <- which(!is.na(drug_ADR_pair$drug_history[k, ]))
       indices_observed_time_points_adr <- which(!is.na(drug_ADR_pair$adr_history[k, ]))
@@ -137,9 +135,9 @@ create2x2table <- function(drug_ADR_pair, method = c("time-point",
       # in which era we (drug or non-drug) and whether
       # the ADR occured during this era
       in_drug_era <-
-        drug_history_patient[1] == 1  # are we currently in a drug era?
+        drug_history_patient[1] == 1 # are we currently in a drug era?
       ADR_happened <-
-        drug_history_patient[1] == 1    # did the ADR occur during this era?
+        drug_history_patient[1] == 1 # did the ADR occur during this era?
 
       sapply(2:(simulation_time_patient - 1), function(t) {
         if (in_drug_era) {
@@ -176,7 +174,6 @@ create2x2table <- function(drug_ADR_pair, method = c("time-point",
               table$d <<- table$d + 1
             }
           }
-
         }
         ADR_happened <- adr_history_patient[t] == 1
       })
@@ -201,9 +198,11 @@ print.cont_table <- function(x, ...) {
   cat(sprintf("    drug |\t%d\t|\t%d\t| %d\n", x$a, x$c, x$a + x$c))
   cat(sprintf("not drug |\t%d\t|\t%d\t| %d\n", x$b, x$d, x$b + x$d))
   cat("------------------------------------------------\n")
-  cat(sprintf("   total |\t%d\t|\t%d\t| %d\n", x$a + x$b,
-              x$c + x$d,
-              x$a + x$b + x$c + x$d))
+  cat(sprintf(
+    "   total |\t%d\t|\t%d\t| %d\n", x$a + x$b,
+    x$c + x$d,
+    x$a + x$b + x$c + x$d
+  ))
 
   if ((x$a + x$c) == (x$a + x$b + x$c + x$d)) {
     cat(crayon::magenta(sprintf("\nwarning: since the number of patients that were prescribed \nthe drug and the total number of patients is the same,\nit might be that the cohort was created like this on purpose")))
