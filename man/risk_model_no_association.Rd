@@ -20,8 +20,8 @@ what so ever.
 }
 \examples{
 drug_history <- c(1, 0, 1, 0, 0)
-risk_model <- risk_model_no_effect() 
-risk_model() 
+risk_model <- risk_model_no_effect()
+risk_model()
 # -> 0
 }
 \seealso{

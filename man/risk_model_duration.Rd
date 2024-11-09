@@ -7,7 +7,7 @@
 risk_model_duration(duration)
 }
 \arguments{
-\item{rate}{The rate with which the risk dissipates}
+\item{duration}{The duration to check against.}
 }
 \value{
 A risk model
@@ -30,8 +30,8 @@ where \eqn{\gamma} is \code{rate}.
 \examples{
 drug_history <- c(1, 0, 1, 0, 0)
 
-risk_model <- risk_model_withdrawal(rate = 1.2) 
-risk_model(drug_history) 
+risk_model <- risk_model_withdrawal(rate = 1.2)
+risk_model(drug_history)
 }
 \seealso{
 Other Risk models: 

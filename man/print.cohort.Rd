@@ -4,7 +4,12 @@
 \alias{print.cohort}
 \title{Print function for \code{\link{generate_cohort}}}
 \usage{
-\method{print}{cohort}(cohort)
+\method{print}{cohort}(x, ..)
+}
+\arguments{
+\item{x}{A \code{cohort} object.}
+
+\item{...}{Unused.}
 }
 \description{
 Print function for \code{\link{generate_cohort}}

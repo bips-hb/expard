@@ -35,8 +35,8 @@ is a sigmoid function.
 \examples{
 drug_history <- c(1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1)
 
-risk_model <- risk_model_long_time_after(rate = .5, delay = 9) 
-risk_model(drug_history) 
+risk_model <- risk_model_long_time_after(rate = .5, delay = 9)
+risk_model(drug_history)
 }
 \seealso{
 Other Risk models: 

@@ -4,7 +4,12 @@
 \alias{print.drug_ADR_pair}
 \title{Function for printing a drug-ADR pair}
 \usage{
-\method{print}{drug_ADR_pair}(drug_ADR_pair)
+\method{print}{drug_ADR_pair}(x, ...)
+}
+\arguments{
+\item{x}{A \code{drug_ADR_pair} object.}
+
+\item{...}{Unused.}
 }
 \description{
 Function for printing a drug-ADR pair

@@ -2,9 +2,12 @@
 % Please edit documentation in R/risk-models.R
 \name{risk_model_decaying}
 \alias{risk_model_decaying}
+\alias{risk_model_delayed_decaying}
 \title{Risk Model 'Decaying'}
 \usage{
 risk_model_decaying(rate)
+
+risk_model_delayed_decaying(mu, sigma, rate)
 }
 \arguments{
 \item{rate}{The rate with which the risk dissipates}
@@ -18,8 +21,8 @@ Risk Model 'Decaying'
 \examples{
 drug_history <- c(1, 0, 1, 0, 0)
 
-risk_model <- risk_model_withdrawal(rate = 1.2) 
-risk_model(drug_history) 
+risk_model <- risk_model_withdrawal(rate = 1.2)
+risk_model(drug_history)
 }
 \seealso{
 Other Risk models: 

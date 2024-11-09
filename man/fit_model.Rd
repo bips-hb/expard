@@ -74,20 +74,20 @@ for more details on the \code{cohort} object.
 }
 
 \examples{
-cohort <- expard::generate_cohort(n_patients = 1000, 
-                                  simulation_time = 100, 
-                                  risk_model = expard::risk_model_immediate(), 
-                                  verbose = TRUE, 
-                                  min_chance_drug = probability_model_constant(.3), 
-                                  max_chance_drug = probability_model_constant(.7), 
+cohort <- expard::generate_cohort(n_patients = 1000,
+                                  simulation_time = 100,
+                                  risk_model = expard::risk_model_immediate(),
+                                  verbose = TRUE,
+                                  min_chance_drug = probability_model_constant(.3),
+                                  max_chance_drug = probability_model_constant(.7),
                                   min_chance_adr = probability_model_constant(.3),
                                   max_chance_adr = probability_model_constant(.6))
 # fit the no effect model
-fit_model(cohort, risk_model = expard::risk_model_no_effect()) 
+fit_model(cohort, risk_model = expard::risk_model_no_effect())
 
 # fit the true immediate effect model
 fit_model(cohort, risk_model = expard::risk_model_immediate())
-# note that the estimators are close to the truth (.3 and .6) 
+# note that the estimators are close to the truth (.3 and .6)
 }
 \seealso{
 \code{\link{check_cohort}},\code{\link{generate_cohort}}

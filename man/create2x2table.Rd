@@ -84,10 +84,10 @@ non-drug eras.
 
 \examples{
 set.seed(1)
-cohort <- generate_cohort(n_patients = 200) 
+cohort <- generate_cohort(n_patients = 200)
 
-# create the 2x2 contingency table per time-point, 
-# drug-era and patient: 
+# create the 2x2 contingency table per time-point,
+# drug-era and patient:
 create2x2table(cohort, method = "time-point")
 create2x2table(cohort, method = "drug-era")
 create2x2table(cohort, method = "patient")
