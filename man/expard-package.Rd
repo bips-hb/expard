@@ -4,9 +4,9 @@
 \name{expard-package}
 \alias{expard}
 \alias{expard-package}
-\title{expard: Drug EXPosures and ADRs}
+\title{expard: Drug 'EXPosures' and 'ADRs'}
 \description{
-An R package for fitting complex drug exposure and adverse drug reaction (ADR) relationships
+An R package for fitting complex drug exposure and adverse drug reaction ('ADR') relationships. It can additionally be used to simulate electronic healthcare record ('EHR') data of patients observed across multiple timepoints.
 }
 \seealso{
 Useful links:
@@ -14,6 +14,10 @@ Useful links:
   \item \url{https://github.com/bips-hb/expard}
   \item Report bugs at \url{https://github.com/bips-hb/expard/issues}
 }
+
+}
+\author{
+\strong{Maintainer}: Louis Dijkstra \email{louisdijkstra@gmail.com}
 
 }
 \keyword{internal}

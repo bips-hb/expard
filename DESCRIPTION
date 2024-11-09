@@ -1,11 +1,13 @@
 Type: Package
 Package: expard
-Title: Drug EXPosures and ADRs
+Title: Drug 'EXPosures' and 'ADRs'
 Version: 1.0.0
-Author: Louis Dijkstra
-Maintainer: Louis Dijkstra <louisdijkstra@gmail.com>
+Authors@R: 
+    person("Louis", "Dijkstra", , "louisdijkstra@gmail.com", role = c("aut", "cre"))
 Description: An R package for fitting complex drug exposure and adverse
-    drug reaction (ADR) relationships
+    drug reaction ('ADR') relationships. It can additionally be used to
+    simulate electronic healthcare record ('EHR') data of patients
+    observed across multiple timepoints.
 License: GPL (>= 3)
 URL: https://github.com/bips-hb/expard
 BugReports: https://github.com/bips-hb/expard/issues

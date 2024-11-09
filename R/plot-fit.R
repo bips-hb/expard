@@ -36,14 +36,14 @@ plot_fit <- function(fit,
 
   # Use only the 'past-use' models for which the past parameter falls in the given range
   if (!is.null(past_values)) {
-    fit <- fit %>% filter(model != 'past-use' | past %in% past_values)
+    fit <- fit %>% dplyr::filter(model != 'past-use' | past %in% past_values)
   }
 
   # get the best BIC fit for each model
   best_fit <- fit %>% group_by(model) %>%
-    filter(BIC == min(BIC))  %>%
+    dplyr::filter(BIC == min(BIC))  %>%
     arrange(past) %>%
-    filter(row_number() == 1) %>%
+    dplyr::filter(row_number() == 1) %>%
     arrange(BIC)
 
   # get the overall minimum and maximum BIC value
@@ -67,7 +67,7 @@ plot_fit <- function(fit,
 
   # plot just the best fit
   ggplot(best_fit) +
-    geom_bar(aes(x = reorder(model, BIC), y = BIC), stat="identity") +
+    geom_bar(aes(x = stats::reorder(model, BIC), y = BIC), stat="identity") +
     coord_cartesian(ylim=y_range) +
     ggtitle(title) +
     #scale_y_continuous(expand = expansion(mult = c(0.1, .1))) + #expand = c(0, 100)) +
