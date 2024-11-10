@@ -90,18 +90,13 @@ create2x2table <- function(
       "patient"
     )
 ) {
-  if (!(method[1] %in% c("time-point", "drug-era", "patient"))) {
-    stop(sprintf(
-      "method should be either '%s', '%s' or '%s'",
-      "time-point", "drug-era", "patient"
-    ))
-  }
+  method <- match.arg(method)
 
   # initialize tables
   out_table <- list(a = 0, b = 0, c = 0, d = 0, method = method[1])
   class(out_table) <- "cont_table"
 
-  if (method[1] == "time-point") {
+  if (method == "time-point") {
     drug <- drug_ADR_pair$drug_history == 1
     ADR <- drug_ADR_pair$adr_history == 1
 
@@ -111,7 +106,7 @@ create2x2table <- function(
     out_table$d <- sum(!drug & !ADR, na.rm = TRUE)
   }
 
-  if (method[1] == "patient") {
+  if (method == "patient") {
     # go over all patients
     drug <- rowSums(as.matrix(drug_ADR_pair$drug_history), na.rm = TRUE) > 0
     ADR <- rowSums(as.matrix(drug_ADR_pair$adr_history), na.rm = TRUE) > 0
@@ -122,8 +117,8 @@ create2x2table <- function(
     out_table$d <- sum(!drug & !ADR, na.rm = TRUE)
   }
 
-  if (method[1] == "drug-era") {
-    sapply(1:drug_ADR_pair$n_patients, function(k) {
+  if (method == "drug-era") {
+    sapply(seq_len(drug_ADR_pair$n_patients), function(k) {
       # remove any none observed time points. They are represented by NAs
       indices_observed_time_points_drug <- which(!is.na(drug_ADR_pair$drug_history[k, ]))
       indices_observed_time_points_adr <- which(!is.na(drug_ADR_pair$adr_history[k, ]))
