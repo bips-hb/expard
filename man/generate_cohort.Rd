@@ -42,6 +42,8 @@ the drug history and the ADR history have the highest
 possible effect (Default: \code{NULL})
 Must have a length of \code{n_drug_ADR_pairs}.}
 
+\item{prob_guaranteed_exposed}{Probability of guaranteed exposure}
+
 \item{min_chance}{The probability of the ADR when
 the drug history has no effect
 Must have a length of \code{n_drug_ADR_pairs}.}

@@ -6,7 +6,7 @@
 \usage{
 plot_risk(
   drug_history = c(rep(0, 4), rep(1, 6), rep(0, 10)),
-  risk_model = risk_model_immediate(),
+  risk_model = risk_model_decaying(3),
   simulation_time = NULL,
   title = "",
   ylim = c(0, 1),
@@ -18,12 +18,12 @@ plot_risk(
 \arguments{
 \item{drug_history}{Binary vector denoting the
 drug prescription history.
-(Default: \code{0 0 0 0 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0})}
+(Default: \verb{0 0 0 0 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0})}
 
 \item{risk_model}{One of the risk models}
 
 \item{simulation_time}{If not \code{NULL}, total number of time points, i.e.,
-\code{0 0 0 0 1 1 1 1 1 1 0 0 0 0 ...}. (Default: \code{NULL})}
+\verb{0 0 0 0 1 1 1 1 1 1 0 0 0 0 ...}. (Default: \code{NULL})}
 
 \item{title}{Title of the plot}
 
@@ -40,23 +40,24 @@ vertical dashed red lines (Default: \code{TRUE})}
 \item{alpha}{Alpha value for shaded area (Default: \code{.3})}
 }
 \value{
-A \code{ggplot2} plot
+A \link{ggplot2} plot
 }
 \description{
 Plots the risk function's behavior for
 a given drug prescription history.
 The \eqn{x}-axis denote the
-drug prescriptions and the \eqn{y}-axis represent the
+drug prescriptions and the \code{y}-axis represent the
 risk level, i.e., \code{1} is maximal risk, \code{0}
 minimal risk.
 }
 \examples{
 drug_history <- c(rep(0, 4), rep(1, 6), rep(0, 10))
-risk_model <- risk_model_immediate() 
+risk_model <- risk_model_withdrawal(rate = 3)
 
 # create the plot
-p <- plot_risk(drug_history, 
-               risk_model, 
-               title = "Direct effect model")
+p <- plot_risk(drug_history,
+  risk_model,
+  title = "Direct effect model"
+)
 p
 }

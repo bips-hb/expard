@@ -15,15 +15,19 @@ plot_fit(
 \arguments{
 \item{fit}{The fit}
 
+\item{x_label}{The x-label for the plot}
+
+\item{title}{The plot title}
+
+\item{y_range}{Used as minimum for the y axis. Guessed if not provided.}
+
 \item{past_values}{If not \code{NULL}, a select number of values for past are
 used for the plot}
-
-\item{xlab}{The x-label}
 }
 \value{
 ggplot
 }
 \description{
 Plots the BIC for the different risk models that were fitted by the
-function \code{\link{fit_all_models}}.
+function \code{\link[=fit_all_models]{fit_all_models()}}.
 }

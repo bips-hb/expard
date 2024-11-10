@@ -32,5 +32,5 @@ the drug being prescribed does not depend on any previous prescriptions.
 \examples{
 set.seed(1)
 determine_first_prescription(n_patients = 4, simulation_time = 10, min_chance_drug = 0.1)
-# -> [1] 2 3 5 9 
+# -> [1] 2 3 5 9
 }

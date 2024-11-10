@@ -4,7 +4,12 @@
 \alias{print.cont_table}
 \title{Print function for 2x2 tables}
 \usage{
-\method{print}{cont_table}(table)
+\method{print}{cont_table}(x, ...)
+}
+\arguments{
+\item{x}{A \code{cont_table} object.}
+
+\item{...}{Unused.}
 }
 \description{
 Print function for 2x2 tables
