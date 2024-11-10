@@ -15,6 +15,7 @@
 #'            possible effect (Default: \code{NULL})
 #' @param guaranteed_exposed If \code{TRUE}, the patient is exposed to the drug
 #'            at least once
+#' @param ... Unused
 #'
 #' @return \code{1} or \code{0}
 #' @family Update functions

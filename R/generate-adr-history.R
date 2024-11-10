@@ -13,15 +13,15 @@
 #'
 #' @return Binary vector of the same length as \code{drug_history}
 #' @export
-generate_adr_history <- function(drug_history,
-                                 risk_model,
-                                 min_chance,
-                                 max_chance,
-                                 ...) {
+generate_adr_history <- function(
+    drug_history,
+    risk_model,
+    min_chance,
+    max_chance
+) {
   simulation_time <- length(drug_history)
 
   prob <- min_chance + (max_chance - min_chance) * risk_model(drug_history, min_chance, max_chance)
 
-  adr_history <- sapply(prob, function(p) rbinom(1, 1, p))
-  return(adr_history)
+  sapply(prob, function(p) rbinom(1, 1, p))
 }

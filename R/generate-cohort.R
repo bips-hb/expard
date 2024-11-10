@@ -5,6 +5,7 @@
 #' function.
 #'
 #' @param n_patients Number of patients
+#' @param prob_guaranteed_exposed Probability of guaranteed exposure
 #' @inheritParams generate_patient
 #' @param verbose Show progress bar (Default: \code{FALSE})
 #'
@@ -16,17 +17,19 @@
 #' @seealso \code{\link{generate_patient}}
 
 #' @export
-generate_cohort <- function(n_patients = 100,
-                            simulation_time = 100,
-                            n_drug_ADR_pairs = 50,
-                            risk_model = rep("risk_model_current_use()", n_drug_ADR_pairs),
-                            min_chance_drug = rep(.1, n_drug_ADR_pairs),
-                            avg_duration = rep(5, n_drug_ADR_pairs),
-                            max_chance_drug = rep(NULL, n_drug_ADR_pairs),
-                            prob_guaranteed_exposed = rep(1, n_drug_ADR_pairs),
-                            min_chance = rep(.1, n_drug_ADR_pairs),
-                            max_chance = rep(.4, n_drug_ADR_pairs),
-                            verbose = FALSE) {
+generate_cohort <- function(
+    n_patients = 100,
+    simulation_time = 100,
+    n_drug_ADR_pairs = 50,
+    risk_model = rep("risk_model_current_use()", n_drug_ADR_pairs),
+    min_chance_drug = rep(.1, n_drug_ADR_pairs),
+    avg_duration = rep(5, n_drug_ADR_pairs),
+    max_chance_drug = rep(NULL, n_drug_ADR_pairs),
+    prob_guaranteed_exposed = rep(1, n_drug_ADR_pairs),
+    min_chance = rep(.1, n_drug_ADR_pairs),
+    max_chance = rep(.4, n_drug_ADR_pairs),
+    verbose = FALSE
+) {
   if (verbose) {
     cat("Generating the patients...\n")
     pb <- txtProgressBar(min = 0, max = n_patients, style = 3)

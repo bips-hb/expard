@@ -25,6 +25,7 @@ loglikelihood <- function(betas,
 
 
 #' @export
+#' @param past Passed to [risk_model_past()]
 #' @rdname loglikelihood
 loglikelihood_past <- function(param,
                                past,
@@ -34,7 +35,7 @@ loglikelihood_past <- function(param,
   beta0 <- param[1]
   beta <- param[2]
 
-  risk_model <- expard::risk_model_past(past)
+  risk_model <- risk_model_past(past)
 
   n_patients <- nrow(drug_history)
   simulation_time <- ncol(drug_history)
@@ -44,7 +45,7 @@ loglikelihood_past <- function(param,
   risks <- matrix(0, nrow = n_patients, ncol = simulation_time)
 
   # go over all patients
-  for (i in 1:n_patients) {
+  for (i in seq_len(n_patients)) {
     # go over all timepoints
     risks[i, ] <- risk_model(drug_history[i, ])
   }
@@ -80,8 +81,9 @@ loglikelihood_withdrawal <- function(
 
   # determine the risks given the time_since last exposure and the rate
   # of the withdrawal model
-  freq_table <- freq_table |> mutate(
-    risk_value = exp(-rate * (unique_value - 1))
+  freq_table <- freq_table |>
+    dplyr::mutate(
+    risk_value = exp(-rate * (.data$unique_value - 1))
   )
 
   # the risk when the time_since is 0 (never exposed or currently exposed)
@@ -137,8 +139,8 @@ loglikelihood_delayed <- function(
   freq_table <- freq_table |>
     dplyr::rowwise() |>
     dplyr::mutate(
-      loglikelihood = -1 * (n_adr * log((pi1 - pi0) * risk_value + pi0) +
-                              n_no_adr * log(1 - (pi1 - pi0) * risk_value - pi0))
+      loglikelihood = -1 * (.data$n_adr * log((pi1 - pi0) * .data$risk_value + pi0) +
+                              .data$n_no_adr * log(1 - (pi1 - pi0) * .data$risk_value - pi0))
     )
 
   sum(freq_table$loglikelihood)
@@ -177,8 +179,8 @@ loglikelihood_decaying <- function(
   freq_table <- freq_table |>
     dplyr::rowwise() |>
     dplyr::mutate(
-      loglikelihood = -1 * (n_adr * log((pi1 - pi0) * risk_value + pi0) +
-                              n_no_adr * log(1 - (pi1 - pi0) * risk_value - pi0))
+      loglikelihood = -1 * (.data$n_adr * log((pi1 - pi0) * .data$risk_value + pi0) +
+                              .data$n_no_adr * log(1 - (pi1 - pi0) * .data$risk_value - pi0))
     )
 
   sum(freq_table$loglikelihood)
@@ -218,8 +220,8 @@ loglikelihood_delayed_decaying <- function(
     dplyr::mutate(
       # risk_value = exp(-rate * (unique_value - 1))
       risk_value_delayed = stats::dnorm(.data$unique_value, mu, sigma) / normalizing_factor,
-      risk_value_decaying = exp(-rate * (unique_value - 1)),
-      risk_value = (risk_value_delayed + .data$risk_value_decaying) /
+      risk_value_decaying = exp(-rate * (.data$unique_value - 1)),
+      risk_value = (.data$risk_value_delayed + .data$risk_value_decaying) /
         max(.data$risk_value_delayed + .data$risk_value_decaying)
     )
 
@@ -231,8 +233,8 @@ loglikelihood_delayed_decaying <- function(
   freq_table <- freq_table |>
     dplyr::rowwise() |>
     dplyr::mutate(
-      loglikelihood = -1 * (n_adr * log((pi1 - pi0) * risk_value + pi0) +
-                              n_no_adr * log(1 - (pi1 - pi0) * risk_value - pi0))
+      loglikelihood = -1 * (.data$n_adr * log((pi1 - pi0) * .data$risk_value + pi0) +
+                              .data$n_no_adr * log(1 - (pi1 - pi0) * .data$risk_value - pi0))
     )
 
   sum(freq_table$loglikelihood)
@@ -261,9 +263,10 @@ loglikelihood_long_term <- function(
 
   # determine the risks given the time_since last exposure and the rate
   # of the withdrawal model
-  freq_table <- freq_table |> mutate(
+  freq_table <- freq_table |>
+    dplyr::mutate(
     # risk_value = exp(-rate * (unique_value - 1))
-    risk_value = 1 / (1 + exp(-rate * (unique_value - delay)))
+    risk_value = 1 / (1 + exp(-rate * (.data$unique_value - delay)))
   )
 
   # the risk when the time_since is 0 (never exposed or currently exposed)
@@ -274,8 +277,8 @@ loglikelihood_long_term <- function(
   freq_table <- freq_table |>
     dplyr::rowwise() |>
     dplyr::mutate(
-      loglikelihood = -1 * (n_adr * log((pi1 - pi0) * risk_value + pi0) +
-                              n_no_adr * log(1 - (pi1 - pi0) * risk_value - pi0))
+      loglikelihood = -1 * (.data$n_adr * log((pi1 - pi0) * .data$risk_value + pi0) +
+                              .data$n_no_adr * log(1 - (pi1 - pi0) * .data$risk_value - pi0))
     )
 
   sum(freq_table$loglikelihood)

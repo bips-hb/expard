@@ -1,6 +1,9 @@
 #' @export
+#' @rdname fit_model
+#' @param parameters Passed to [fit_model()]
+#' @param mc.cores Number of cores used for parallelization
 fit_all_models <- function(
-    pair,
+    cohort,
     models = c(
       "no-association",
       "current-use",
@@ -31,7 +34,7 @@ fit_all_models <- function(
       require(dplyr)
       require(expard)
     })
-    parallelclusterExport(
+    parallel::parallelclusterExport(
       cluster, c("pair", "models", "method", "maxiter", "parameters"),
       envir = environment()
     )
@@ -41,7 +44,7 @@ fit_all_models <- function(
 
   fit_model_local_function <- function(model) {
     cat(sprintf("Fitting model %s...\n", model))
-    fit_model(pair, model, zero_patients, zero_timepoints, method, maxiter, parameters)
+    fit_model(cohort, model, zero_patients, zero_timepoints, method, maxiter, parameters)
   }
 
   if (run_parallel) {
@@ -50,19 +53,19 @@ fit_all_models <- function(
     # to parallelize the entire thing
     if ("past-use" %in% models) {
       models <- models[models != "past-use"]
-      simulation_time <- ncol(pair$drug_history)
+      simulation_time <- ncol(cohort$drug_history)
       past <- 1:(simulation_time - 1)
       models <- c(models, sprintf("past-use(%d)", past))
     }
 
-    res_temp <- parLapply(cluster, models, function(model) {
+    res_temp <- parallel::parLapply(cluster, models, function(model) {
       cat(sprintf("Fitting model %s...\n", model))
-      fit_model(pair, model, zero_patients, zero_timepoints, method, maxiter, parameters)
+      fit_model(cohort, model, zero_patients, zero_timepoints, method, maxiter, parameters)
     }) # fit_model_local_function(model))
   } else {
     res_temp <- lapply(models, function(model) {
       cat(sprintf("Fitting model %s...\n", model))
-      fit_model(pair, model, zero_patients, zero_timepoints, method, maxiter, parameters)
+      fit_model(cohort, model, zero_patients, zero_timepoints, method, maxiter, parameters)
     }) # fit_model_local_function(model))
   }
   if (run_parallel) {
@@ -92,10 +95,9 @@ fit_all_models <- function(
     dplyr::mutate(
       posterior = exp(-.data$delta_BIC / 2) / denominator
     ) |>
-    dplyr::select(model, posterior)
+    dplyr::select(c("model", "posterior"))
 
-  res <- dplyr::full_join(r, res)
-
-  res |>
+  r |>
+    dplyr::full_join(res) |>
     dplyr::arrange(dplyr::desc(posterior))
 }

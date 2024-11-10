@@ -40,6 +40,7 @@ risk_models <- c(
 #' risk_model()
 #' # -> 0
 #' @export
+#' @rdname risk_models
 risk_model_no_association <- function() {
   function(drug_history, ...) {
     rep(0, length(drug_history))
@@ -57,13 +58,13 @@ risk_model_no_association <- function() {
 #' is maximal only when the patient is currently
 #' exposed.
 #'
-#' @return A risk model
 #' @family Risk models
 #' @examples
 #' drug_history <- c(1, 0, 1, 0, 0)
 #' risk_model <- risk_model_withdrawal(rate = 3)
 #' risk_model(drug_history)
 #' @export
+#' @rdname risk_models
 risk_model_current_use <- function() {
   function(drug_history, ...) {
     return(drug_history)
@@ -87,16 +88,16 @@ risk_model_current_use <- function() {
 #' \deqn{\exp(-\gamma \cdot (\tau - 1))}
 #' where \eqn{\gamma} is \code{rate}.
 #'
-#' @param rate The rate with which the risk dissipates
+#' @param past Reference time point > 0.
 #'
-#' @return A risk model
 #' @family Risk models
 #' @examples
 #' drug_history <- c(1, 0, 1, 0, 0)
 #'
-#' risk_model <- risk_model_withdrawal(rate = 1.2)
+#' risk_model <- risk_model_past(past = 2)
 #' risk_model(drug_history)
 #' @export
+#' @rdname risk_models
 risk_model_past <- function(past) {
   # check correctness input
   if (past <= 0) {
@@ -131,7 +132,6 @@ risk_model_past <- function(past) {
 #'
 #' @param duration The duration to check against.
 #'
-#' @return A risk model
 #' @family Risk models
 #' @examples
 #' drug_history <- c(1, 0, 1, 0, 0)
@@ -139,6 +139,7 @@ risk_model_past <- function(past) {
 #' risk_model <- risk_model_withdrawal(rate = 1.2)
 #' risk_model(drug_history)
 #' @export
+#' @rdname risk_models
 risk_model_duration <- function(duration) {
   # check correctness input
   if (duration <= 0) {
@@ -173,7 +174,6 @@ risk_model_duration <- function(duration) {
 #'
 #' @param rate The rate with which the risk dissipates
 #'
-#' @return A risk model
 #' @family Risk models
 #' @examples
 #' drug_history <- c(1, 0, 1, 0, 0)
@@ -181,6 +181,7 @@ risk_model_duration <- function(duration) {
 #' risk_model <- risk_model_withdrawal(rate = 1.2)
 #' risk_model(drug_history)
 #' @export
+#' @rdname risk_models
 risk_model_withdrawal <- function(rate) {
   # check correctness input
   if (rate <= 0) {
@@ -209,14 +210,10 @@ risk_model_withdrawal <- function(rate) {
 }
 
 
-
-
-
 #' Risk Model 'Delayed'
 #'
 #' @param mu,sigma The parameters to [dnorm()] used to model the risk.
 #'
-#' @return A risk model
 #' @family Risk models
 #' @examples
 #' drug_history <- c(1, 0, 1, 0, 0)
@@ -224,6 +221,7 @@ risk_model_withdrawal <- function(rate) {
 #' risk_model <- risk_model_delayed(5, 1)
 #' risk_model(drug_history)
 #' @export
+#' @rdname risk_models
 risk_model_delayed <- function(mu, sigma) {
   # check correctness input
   if (mu <= 0) {
@@ -263,14 +261,14 @@ risk_model_delayed <- function(mu, sigma) {
 #'
 #' @param rate The rate with which the risk dissipates
 #'
-#' @return A risk model
 #' @family Risk models
 #' @examples
 #' drug_history <- c(1, 0, 1, 0, 0)
 #'
-#' risk_model <- risk_model_withdrawal(rate = 1.2)
+#' risk_model <- risk_model_decaying(rate = 1.2)
 #' risk_model(drug_history)
 #' @export
+#' @rdname risk_models
 risk_model_decaying <- function(rate) {
   # check correctness input
   if (rate <= 0) {
@@ -301,9 +299,8 @@ risk_model_decaying <- function(rate) {
 }
 
 
-
 #' @export
-#' @rdname risk_model_decaying
+#' @rdname risk_models
 risk_model_delayed_decaying <- function(mu, sigma, rate) {
   # check correctness input
   if (rate <= 0) {
@@ -334,9 +331,6 @@ risk_model_delayed_decaying <- function(mu, sigma, rate) {
 }
 
 
-
-
-
 #' Risk Model 'Long Time After'
 #'
 #' A risk model reflects how the probability of
@@ -359,7 +353,6 @@ risk_model_delayed_decaying <- function(mu, sigma, rate) {
 #' @param rate The rate with which the risk increases
 #' @param delay How long it takes before the risk is .5
 #'
-#' @return A risk model
 #' @family Risk models
 #' @examples
 #' drug_history <- c(1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1)
@@ -367,6 +360,7 @@ risk_model_delayed_decaying <- function(mu, sigma, rate) {
 #' risk_model <- risk_model_long_time_after(rate = .5, delay = 9)
 #' risk_model(drug_history)
 #' @export
+#' @rdname risk_models
 risk_model_long_term <- function(rate, delay) {
   function(drug_history, ...) {
     simulation_time <- length(drug_history)

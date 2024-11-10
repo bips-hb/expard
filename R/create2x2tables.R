@@ -62,6 +62,7 @@
 #'               \code{time-point}, \code{drug-era} and \code{patient}.
 #'               See the description for more information (Default:
 #'               \code{time-point})
+#' @param verbose If \code{TRUE} (default), a progress bar is shown
 #'
 #' @return A list of \code{cont_table} objects
 #'

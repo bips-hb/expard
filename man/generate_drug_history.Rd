@@ -28,6 +28,8 @@ possible effect (Default: \code{NULL})}
 
 \item{guaranteed_exposed}{If \code{TRUE}, the patient is exposed to the drug
 at least once}
+
+\item{...}{Unused}
 }
 \value{
 \code{1} or \code{0}

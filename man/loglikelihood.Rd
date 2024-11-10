@@ -35,6 +35,8 @@ history}
 
 \item{param}{Vector with parameters.}
 
+\item{past}{Passed to \code{\link[=risk_model_past]{risk_model_past()}}}
+
 \item{drug_history}{Binary vector with the observed drug history}
 
 \item{freq_table}{A data frame with the column \code{unique_value}.}

@@ -30,6 +30,9 @@
 #' @param method Methods used by the base \code{\link{optim}}-solver
 #' @param maxiter Maximum number iterations for the \code{\link{optim}}-solver
 #' @param control List used by the base \code{\link{optim}}-solver
+#' @param zero_patients,zero_timepoints Integer values (TODO)
+#' @param parameters list (TODO)
+#'
 #'
 #' @return A model fit. A list with the items
 #'       \item{\code{n_patients}}{Total number of patients in the dataset}
@@ -46,7 +49,7 @@
 #'
 #' @seealso \code{\link{check_cohort}},\code{\link{generate_cohort}}
 #' @examples
-#' cohort <- expard::generate_cohort(
+#' cohort <- generate_cohort(
 #'   n_patients = 1000,
 #'   simulation_time = 100,
 #'   risk_model = expard::risk_model_withdrawal(rate = 3),
@@ -63,31 +66,35 @@
 #' fit_model(cohort, risk_model = expard::risk_model_withdrawal(rate = 3))
 #' # note that the estimators are close to the truth (.3 and .6)
 #' @export
-fit_model <- function(pair,
-                      model = c(
-                        "no-association",
-                        "current-use",
-                        "past-use",
-                        "withdrawal",
-                        "delayed",
-                        "decaying",
-                        "delayed+decaying",
-                        "long-term"
-                      ),
-                      zero_patients = 0,
-                      zero_timepoints = 0,
-                      method = c(
-                        "L-BFGS-B", "Nelder-Mead", "BFGS", "CG", "SANN",
-                        "Brent"
-                      ),
-                      maxiter = 1000,
-                      parameters = list(),
-                      mc.cores = 1) {
+fit_model <- function(
+    cohort,
+    model = c(
+      "no-association",
+      "current-use",
+      "past-use",
+      "withdrawal",
+      "delayed",
+      "decaying",
+      "delayed+decaying",
+      "long-term"
+    ),
+    zero_patients = 0,
+    zero_timepoints = 0,
+    method = c(
+      "L-BFGS-B", "Nelder-Mead", "BFGS", "CG", "SANN",
+      "Brent"
+    ),
+    maxiter = 1000,
+    parameters = list()
+) {
+
+  model <- match.arg(model)
+
   # initialize the fit --------------------------------
   fit <- data.frame(
-    n_patients = nrow(pair$drug_history) + zero_patients,
-    simulation_time = ncol(pair$drug_history),
-    model = model[1],
+    n_patients = nrow(cohort$drug_history) + zero_patients,
+    simulation_time = ncol(cohort$drug_history),
+    model = model,
     n_param = NA,
     loglikelihood = NA,
     converged = NA
@@ -96,9 +103,9 @@ fit_model <- function(pair,
   # class(fit) <- c(class(fit), "expardmodel")
 
   # No association model -------------------------------------------------------
-  if (model[1] == "no-association") {
+  if (model == "no-association") {
     # determine the 2x2 table
-    table <- expard::create2x2table(pair, method = "time-point")
+    table <- create2x2table(cohort, method = "time-point")
 
     # add all the time points of patients that were never exposed
     table$d <- table$d + zero_timepoints
@@ -116,9 +123,9 @@ fit_model <- function(pair,
   }
 
 
-  if (model[1] == "current-use") {
+  if (model == "current-use") {
     # create 2x2 tables
-    table <- expard::create2x2table(pair, method = "time-point")
+    table <- create2x2table(cohort, method = "time-point")
 
     # add all the time points of patients that were never exposed
     table$d <- table$d + zero_timepoints
@@ -127,7 +134,8 @@ fit_model <- function(pair,
     pi0 <- table$b / (table$b + table$d)
 
     fit$n_param <- 2
-    fit$loglikelihood <- -1 * (table$a) * log(pi1) - (table$c) * log(1 - pi1) - table$b * log(pi0) - (table$d) * log(1 - pi0)
+    fit$loglikelihood <- -1 * (table$a) * log(pi1) - (table$c) *
+      log(1 - pi1) - table$b * log(pi0) - (table$d) * log(1 - pi0)
     fit$converged <- TRUE
 
     fit$p1 <- pi1
@@ -140,26 +148,25 @@ fit_model <- function(pair,
   }
 
 
-
-  if (model[1] == "past-use") {
-    simulation_time <- ncol(pair$drug_history)
-    n_patients <- nrow(pair$drug_history)
+  if (model == "past-use") {
+    simulation_time <- ncol(cohort$drug_history)
+    n_patients <- nrow(cohort$drug_history)
 
     # determine how many time points have not been observed
-    not_observed_drug <- is.na(pair$drug_history)
-    not_observed_adr <- is.na(pair$adr_history)
+    not_observed_drug <- is.na(cohort$drug_history)
+    not_observed_adr <- is.na(cohort$adr_history)
     not_observed <- not_observed_drug | not_observed_adr
 
     # total number of observed timepoints
     n_observed_timepoints <- n_patients * simulation_time - sum(not_observed) + zero_timepoints
 
-    past <- 1:(simulation_time - 1)
+    past <- seq_len(simulation_time - 1)
 
     fit <- data.frame(
       expand.grid(
         n_patients = n_patients + zero_patients,
         simulation_time = simulation_time,
-        model = model[1],
+        model = model,
         n_param = 3,
         loglikelihood = NA,
         converged = NA,
@@ -179,10 +186,10 @@ fit_model <- function(pair,
       risks <- matrix(0, nrow = n_patients, ncol = simulation_time)
 
       # go over all patients
-      for (i in 1:n_patients) {
+      for (i in seq_len(n_patients)) {
         # go over all timepoints
         risks[i, ] <- apply_function_to_observed_timepoints(
-          pair$drug_history[i, ],
+          cohort$drug_history[i, ],
           risk_model
         )
         # risks[i, ] <- risk_model(pair$drug_history[i, ])
@@ -201,11 +208,11 @@ fit_model <- function(pair,
       # determine the marginals
       n1. <- sum(risks, na.rm = TRUE)
       n0. <- n_observed_timepoints - n1.
-      n.1 <- sum(pair$adr_history, na.rm = TRUE)
+      n.1 <- sum(cohort$adr_history, na.rm = TRUE)
       n.0 <- n_observed_timepoints - n.1
 
       # determine the entries
-      n11 <- sum(risks & pair$adr_history, na.rm = TRUE)
+      n11 <- sum(risks & cohort$adr_history, na.rm = TRUE)
       n01 <- n.1 - n11
       n10 <- n1. - n11
       n00 <- n0. - n01
@@ -235,8 +242,8 @@ fit_model <- function(pair,
   }
 
   # if it is a single past model with a fixed past parameter
-  if (substr(model[1], start = 1, stop = 9) == "past-use(") {
-    substr(model[1], start = 1, stop = 9)
+  if (substr(model, start = 1, stop = 9) == "past-use(") {
+    substr(model, start = 1, stop = 9)
     d <- as.integer(substr(model[1], 10, nchar(model[1]) - 1))
 
     simulation_time <- ncol(pair$drug_history)
@@ -266,7 +273,7 @@ fit_model <- function(pair,
 
     estimates <- lapply(past, function(d) {
       # select the risk model
-      risk_model <- expard::risk_model_past(d)
+      risk_model <- risk_model_past(d)
 
       # 'convert' the drug prescriptions. They reflect which period is considered
       # to have an increased risk
@@ -327,7 +334,7 @@ fit_model <- function(pair,
 
 
 
-  if (model[1] == "withdrawal") {
+  if (model == "withdrawal") {
     # determine times since last exposure for a drug history of a single patient
     determine_time_steps_ago <- function(drug_history) {
       sapply(1:length(drug_history), function(t) {
@@ -364,10 +371,10 @@ fit_model <- function(pair,
     freq_table[1, "n_no_adr"] <- freq_table[1, "n_no_adr"] + zero_timepoints
 
     res <- optim(c(0, 0, -1),
-      expard::loglikelihood_withdrawal,
-      freq_table = freq_table,
-      method = "Nelder-Mead",
-      control = list(maxit = maxiter)
+                 loglikelihood_withdrawal,
+                 freq_table = freq_table,
+                 method = "Nelder-Mead",
+                 control = list(maxit = maxiter)
     )
 
     beta0 <- res$par[1]
@@ -387,7 +394,7 @@ fit_model <- function(pair,
   }
 
 
-  if (model[1] == "delayed") {
+  if (model == "delayed") {
     determine_time_steps_since_start <- function(drug_history) {
       simulation_time <- length(drug_history)
       sapply(1:simulation_time, function(t) {
@@ -423,10 +430,10 @@ fit_model <- function(pair,
 
 
     res <- optim(c(0, 0, 1, 1),
-      expard::loglikelihood_delayed,
-      freq_table = freq_table,
-      method = "Nelder-Mead",
-      control = list(maxit = maxiter)
+                 loglikelihood_delayed,
+                 freq_table = freq_table,
+                 method = "Nelder-Mead",
+                 control = list(maxit = maxiter)
     )
 
     beta0 <- res$par[1]
@@ -447,7 +454,7 @@ fit_model <- function(pair,
   }
 
 
-  if (model[1] == "decaying") {
+  if (model == "decaying") {
     determine_time_steps <- function(drug_history) {
       simulation_time <- length(drug_history)
 
@@ -488,10 +495,10 @@ fit_model <- function(pair,
     freq_table[1, "n_no_adr"] <- freq_table[1, "n_no_adr"] + zero_timepoints
 
     res <- optim(c(-1, 0, log(1)),
-      expard::loglikelihood_decaying,
-      freq_table = freq_table,
-      method = "Nelder-Mead",
-      control = list(maxit = maxiter)
+                 expard::loglikelihood_decaying,
+                 freq_table = freq_table,
+                 method = "Nelder-Mead",
+                 control = list(maxit = maxiter)
     )
 
 
@@ -514,7 +521,7 @@ fit_model <- function(pair,
 
 
 
-  if (model[1] == "delayed+decaying") {
+  if (model == "delayed+decaying") {
     determine_time_steps <- function(drug_history) {
       simulation_time <- length(drug_history)
       sapply(1:simulation_time, function(t) {
@@ -548,10 +555,10 @@ fit_model <- function(pair,
     freq_table[1, "n_no_adr"] <- freq_table[1, "n_no_adr"] + zero_timepoints
 
     res <- optim(c(-1, 0, log(1), log(1), log(1)),
-      expard::loglikelihood_delayed_decaying,
-      freq_table = freq_table,
-      method = "Nelder-Mead",
-      control = list(maxit = maxiter)
+                 loglikelihood_delayed_decaying,
+                 freq_table = freq_table,
+                 method = "Nelder-Mead",
+                 control = list(maxit = maxiter)
     )
 
 
@@ -579,7 +586,7 @@ fit_model <- function(pair,
 
 
 
-  if (model[1] == "long-term") {
+  if (model == "long-term") {
     determine_time_steps <- function(drug_history) {
       simulation_time <- length(drug_history)
 
@@ -617,10 +624,10 @@ fit_model <- function(pair,
     freq_table[1, "n_no_adr"] <- freq_table[1, "n_no_adr"] + zero_timepoints
 
     res <- optim(c(0, 0, 0, 0),
-      expard::loglikelihood_long_term,
-      freq_table = freq_table,
-      method = "Nelder-Mead",
-      control = list(maxit = maxiter)
+                 expard::loglikelihood_long_term,
+                 freq_table = freq_table,
+                 method = "Nelder-Mead",
+                 control = list(maxit = maxiter)
     )
 
     beta0 <- res$par[1]
@@ -643,7 +650,6 @@ fit_model <- function(pair,
     return(fit)
   }
 
-  stop("model not known")
 }
 
 #' Print function for the hccd fit_model
