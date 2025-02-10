@@ -72,8 +72,12 @@ information, see the comments to `fit_model`.
 
 We gratefully acknowledge the financial support from the innovation fund (“Innovationsfonds”) of the Federal Joint Committee in Germany (grant number: 01VSF16020).
 
-## Contact
+## Reference 
+*Louis Dijkstra, Tania Schink, Ronja Foraita* (2024)\
+**An Exposure Model Framework for Signal Detection based on Electronic Healthcare Data**\
+[https://arxiv.org/abs/2404.14213](https://arxiv.org/abs/2404.14213)
 
-Louis Dijkstra\
-Leibniz Institute for Prevention Research & Epidemiology  
-E-mail: dijkstra (at) leibniz-bips.de
+
+## Author
+
+Louis Dijkstra
