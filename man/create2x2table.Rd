@@ -84,13 +84,14 @@ non-drug eras.
 
 \examples{
 set.seed(1)
-cohort <- generate_cohort(n_patients = 200) 
+cohort <- generate_cohort(n_patients = 200, n_drug_ADR_pairs = 1)
+drug_ADR_pair <- cohort[[1]]
 
-# create the 2x2 contingency table per time-point, 
-# drug-era and patient: 
-create2x2table(cohort, method = "time-point")
-create2x2table(cohort, method = "drug-era")
-create2x2table(cohort, method = "patient")
+# create the 2x2 contingency table per time-point,
+# drug-era and patient:
+create2x2table(drug_ADR_pair, method = "time-point")
+create2x2table(drug_ADR_pair, method = "drug-era")
+create2x2table(drug_ADR_pair, method = "patient")
 }
 \references{
 Zorych, I., Madigan, D., Ryan, P., & Bate, A. (2013). Disproportionality methods for

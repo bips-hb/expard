@@ -4,7 +4,12 @@
 \alias{print.patient}
 \title{Function for printing a patient}
 \usage{
-\method{print}{patient}(patient)
+\method{print}{patient}(x, ...)
+}
+\arguments{
+\item{x}{A \code{patient} object.}
+
+\item{...}{Unused.}
 }
 \description{
 Function for printing a patient

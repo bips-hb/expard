@@ -2,9 +2,27 @@
 % Please edit documentation in R/loglikelihood.R
 \name{loglikelihood}
 \alias{loglikelihood}
+\alias{loglikelihood_past}
+\alias{loglikelihood_withdrawal}
+\alias{loglikelihood_delayed}
+\alias{loglikelihood_decaying}
+\alias{loglikelihood_delayed_decaying}
+\alias{loglikelihood_long_term}
 \title{Negative of the Log-Likelihood Function}
 \usage{
 loglikelihood(betas, risks, adr_history)
+
+loglikelihood_past(param, past, drug_history, adr_history)
+
+loglikelihood_withdrawal(param, freq_table)
+
+loglikelihood_delayed(param, freq_table)
+
+loglikelihood_decaying(param, freq_table)
+
+loglikelihood_delayed_decaying(param, freq_table)
+
+loglikelihood_long_term(param, freq_table)
 }
 \arguments{
 \item{betas}{Vector with two entries: \code{beta0, beta}}
@@ -12,6 +30,16 @@ loglikelihood(betas, risks, adr_history)
 \item{risks}{Risks determined by the risk model. The risk
 model was applied to the observed drug prescription
 history}
+
+\item{adr_history}{Binary vector with the observed ADR history}
+
+\item{param}{Vector with parameters.}
+
+\item{past}{Passed to \code{\link[=risk_model_past]{risk_model_past()}}}
+
+\item{drug_history}{Binary vector with the observed drug history}
+
+\item{freq_table}{A data frame with the column \code{unique_value}.}
 }
 \description{
 \code{loglikelihood} returns the negative

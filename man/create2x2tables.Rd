@@ -17,6 +17,8 @@ create2x2tables(
 \code{time-point}, \code{drug-era} and \code{patient}.
 See the description for more information (Default:
 \code{time-point})}
+
+\item{verbose}{If \code{TRUE} (default), a progress bar is shown}
 }
 \value{
 A list of \code{cont_table} objects
@@ -87,14 +89,15 @@ non-drug eras.
 }
 
 \examples{
+\donttest{
 set.seed(1)
-cohort <- generate_cohort(n_patients = 200) 
+cohort <- generate_cohort(n_patients = 200)
 
-# create the 2x2 contingency table per time-point, 
-# drug-era and patient: 
-create2x2table(cohort, method = "time-point")
-create2x2table(cohort, method = "drug-era")
-create2x2table(cohort, method = "patient")
+# create the 2x2 contingency tables for all drug-ADR pairs:
+create2x2tables(cohort, method = "time-point")
+create2x2tables(cohort, method = "drug-era")
+create2x2tables(cohort, method = "patient")
+}
 }
 \references{
 Zorych, I., Madigan, D., Ryan, P., & Bate, A. (2013). Disproportionality methods for

@@ -4,7 +4,12 @@
 \alias{print.expardfit2}
 \title{Print function for the hccd fit_model}
 \usage{
-\method{print}{expardfit2}(fit)
+\method{print}{expardfit2}(x, ...)
+}
+\arguments{
+\item{x}{A \code{expardfit2} object.}
+
+\item{...}{Unused.}
 }
 \description{
 Print function for the hccd fit_model

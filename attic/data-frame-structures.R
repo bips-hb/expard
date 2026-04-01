@@ -1,6 +1,6 @@
-Final Data frame: 
-  
-drug
+Final
+Data
+frame:drug
 ADR
 n_patients
 simulation_time
@@ -16,17 +16,17 @@ true_sigma
 
 model
 
-n_param 
+n_param
 
 pi0
 pi1
 past
 rate
 delay
-mu 
+mu
 sigma
 
-loglikelihood 
+loglikelihood
 converged
 AIC
 BIC

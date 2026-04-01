@@ -4,7 +4,7 @@
 \alias{generate_adr_history}
 \title{Returns ADR History}
 \usage{
-generate_adr_history(drug_history, risk_model, min_chance, max_chance, ...)
+generate_adr_history(drug_history, risk_model, min_chance, max_chance)
 }
 \arguments{
 \item{drug_history}{Binary vector denoting the
