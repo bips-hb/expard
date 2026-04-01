@@ -28,12 +28,12 @@
 #' )
 #' @export
 generate_drug_history <- function(
-    simulation_time = 10,
-    min_chance,
-    avg_duration = 5,
-    max_chance = NULL,
-    guaranteed_exposed = TRUE,
-    ...
+  simulation_time = 10,
+  min_chance,
+  avg_duration = 5,
+  max_chance = NULL,
+  guaranteed_exposed = TRUE,
+  ...
 ) {
   if (avg_duration < 1) {
     stop("avg duration must be at least 1")
@@ -45,7 +45,11 @@ generate_drug_history <- function(
 
   # determine first time the drug is prescribed by a random sample
   if (guaranteed_exposed) {
-    first <- determine_first_prescription(n_patients = 1, simulation_time, min_chance)
+    first <- determine_first_prescription(
+      n_patients = 1,
+      simulation_time,
+      min_chance
+    )
 
     if (first == simulation_time) {
       drug_history <- c(rep(0, simulation_time - 1), 1)

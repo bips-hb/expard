@@ -1,7 +1,7 @@
 Type: Package
 Package: expard
 Title: Drug 'EXPosures' and 'ADRs'
-Version: 1.0.0
+Version: 1.1.0
 Authors@R: 
     person("Louis", "Dijkstra", , "louisdijkstra@gmail.com", role = c("aut", "cre"))
 Description: An R package for fitting complex drug exposure and adverse
@@ -22,4 +22,4 @@ Imports:
     utils
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3

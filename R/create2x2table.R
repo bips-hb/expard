@@ -74,21 +74,22 @@
 #' @seealso \code{\link{generate_cohort}}
 #' @examples
 #' set.seed(1)
-#' cohort <- generate_cohort(n_patients = 200)
+#' cohort <- generate_cohort(n_patients = 200, n_drug_ADR_pairs = 1)
+#' drug_ADR_pair <- cohort[[1]]
 #'
 #' # create the 2x2 contingency table per time-point,
 #' # drug-era and patient:
-#' create2x2table(cohort, method = "time-point")
-#' create2x2table(cohort, method = "drug-era")
-#' create2x2table(cohort, method = "patient")
+#' create2x2table(drug_ADR_pair, method = "time-point")
+#' create2x2table(drug_ADR_pair, method = "drug-era")
+#' create2x2table(drug_ADR_pair, method = "patient")
 #' @export
 create2x2table <- function(
-    drug_ADR_pair,
-    method = c(
-      "time-point",
-      "drug-era",
-      "patient"
-    )
+  drug_ADR_pair,
+  method = c(
+    "time-point",
+    "drug-era",
+    "patient"
+  )
 ) {
   method <- match.arg(method)
 
@@ -118,66 +119,66 @@ create2x2table <- function(
   }
 
   if (method == "drug-era") {
-    sapply(seq_len(drug_ADR_pair$n_patients), function(k) {
-      # remove any none observed time points. They are represented by NAs
-      indices_observed_time_points_drug <- which(!is.na(drug_ADR_pair$drug_history[k, ]))
-      indices_observed_time_points_adr <- which(!is.na(drug_ADR_pair$adr_history[k, ]))
-      indices_observed_time_points <- union(indices_observed_time_points_drug, indices_observed_time_points_adr)
+    n_patients <- nrow(drug_ADR_pair$drug_history)
 
-      drug_history_patient <- drug_ADR_pair$drug_history[k, indices_observed_time_points]
-      adr_history_patient <- drug_ADR_pair$adr_history[k, indices_observed_time_points]
+    for (k in seq_len(n_patients)) {
+      drug_hist <- as.numeric(drug_ADR_pair$drug_history[k, ])
+      adr_hist <- as.numeric(drug_ADR_pair$adr_history[k, ])
 
-      simulation_time_patient <- length(drug_history_patient)
+      # remove unobserved time points (represented by NAs)
+      observed <- !is.na(drug_hist) & !is.na(adr_hist)
+      drug_hist <- drug_hist[observed]
+      adr_hist <- adr_hist[observed]
 
-      # first initialize some variables to keep track
-      # in which era we (drug or non-drug) and whether
-      # the ADR occured during this era
-      in_drug_era <-
-        drug_history_patient[1] == 1 # are we currently in a drug era?
-      ADR_happened <-
-        drug_history_patient[1] == 1 # did the ADR occur during this era?
+      if (length(drug_hist) == 0) {
+        next
+      }
 
-      sapply(2:(simulation_time_patient - 1), function(t) {
-        if (in_drug_era) {
-          # in drug-era
-          if (drug_history_patient[t]) {
-            # drug prescribed on time point t?
-            if (drug_history_patient[t]) {
-              # did the ADR occur?
-              ADR_happened <- TRUE
-            }
-          } else {
-            # switch from a drug-era to a non-drug era
-            in_drug_era <- FALSE
-            if (ADR_happened) {
-              out_table$a <<- out_table$a + 1
-            } else {
-              out_table$c <<- out_table$c + 1
-            }
-          }
+      in_drug_era <- drug_hist[1] == 1
+      adr_happened <- adr_hist[1] == 1
+
+      for (t in seq_along(drug_hist)[-1]) {
+        currently_on_drug <- drug_hist[t] == 1
+
+        if (currently_on_drug == in_drug_era) {
+          # same era continues
+          if (adr_hist[t] == 1) adr_happened <- TRUE
         } else {
-          # not in drug-era
-          if (drug_history_patient[t] == 0) {
-            # drug not prescribed
-            if (drug_history_patient[t] == 1) {
-              # ADR occurred
-              ADR_happened <- TRUE
+          # era switch: record the completed era
+          if (in_drug_era) {
+            if (adr_happened) {
+              out_table$a <- out_table$a + 1
+            } else {
+              out_table$c <- out_table$c + 1
             }
           } else {
-            # switch from a non-drug-era to a drug era
-            in_drug_era <- TRUE
-            if (ADR_happened) {
-              out_table$b <<- out_table$b + 1
+            if (adr_happened) {
+              out_table$b <- out_table$b + 1
             } else {
-              out_table$d <<- out_table$d + 1
+              out_table$d <- out_table$d + 1
             }
           }
+          in_drug_era <- currently_on_drug
+          adr_happened <- adr_hist[t] == 1
         }
-        ADR_happened <- adr_history_patient[t] == 1
-      })
-    })
-  }
+      }
 
+      # record the final era
+      if (in_drug_era) {
+        if (adr_happened) {
+          out_table$a <- out_table$a + 1
+        } else {
+          out_table$c <- out_table$c + 1
+        }
+      } else {
+        if (adr_happened) {
+          out_table$b <- out_table$b + 1
+        } else {
+          out_table$d <- out_table$d + 1
+        }
+      }
+    }
+  }
 
   out_table$n <- out_table$a + out_table$b + out_table$c + out_table$d
 
@@ -197,12 +198,15 @@ print.cont_table <- function(x, ...) {
   cat(sprintf("not drug |\t%d\t|\t%d\t| %d\n", x$b, x$d, x$b + x$d))
   cat("------------------------------------------------\n")
   cat(sprintf(
-    "   total |\t%d\t|\t%d\t| %d\n", x$a + x$b,
+    "   total |\t%d\t|\t%d\t| %d\n",
+    x$a + x$b,
     x$c + x$d,
     x$a + x$b + x$c + x$d
   ))
 
   if ((x$a + x$c) == (x$a + x$b + x$c + x$d)) {
-    cat(crayon::magenta(sprintf("\nwarning: since the number of patients that were prescribed \nthe drug and the total number of patients is the same,\nit might be that the cohort was created like this on purpose")))
+    cat(crayon::magenta(sprintf(
+      "\nwarning: since the number of patients that were prescribed \nthe drug and the total number of patients is the same,\nit might be that the cohort was created like this on purpose"
+    )))
   }
 }

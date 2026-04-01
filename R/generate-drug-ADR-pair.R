@@ -28,22 +28,30 @@
 #' @examples
 #' drug_ADR_pair <- expard::generate_drug_ADR_pair()
 #' @export
-generate_drug_ADR_pair <- function(simulation_time = 100,
-                                   risk_model = risk_model_current_use(),
-                                   min_chance_drug = .1,
-                                   avg_duration = 5,
-                                   max_chance_drug = NULL,
-                                   guaranteed_exposed = TRUE,
-                                   min_chance = .1,
-                                   max_chance = .4) {
+generate_drug_ADR_pair <- function(
+  simulation_time = 100,
+  risk_model = risk_model_current_use(),
+  min_chance_drug = .1,
+  avg_duration = 5,
+  max_chance_drug = NULL,
+  guaranteed_exposed = TRUE,
+  min_chance = .1,
+  max_chance = .4
+) {
   drug_history <- generate_drug_history(
-    simulation_time, min_chance_drug,
-    avg_duration, max_chance_drug,
+    simulation_time,
+    min_chance_drug,
+    avg_duration,
+    max_chance_drug,
     guaranteed_exposed
   )
 
-
-  adr_history <- generate_adr_history(drug_history, risk_model, min_chance, max_chance)
+  adr_history <- generate_adr_history(
+    drug_history,
+    risk_model,
+    min_chance,
+    max_chance
+  )
 
   res <- list(
     drug_history = drug_history,

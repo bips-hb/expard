@@ -32,15 +32,17 @@
 #'
 #' @seealso \code{\link{generate_cohort}}, \code{\link{generate_drug_ADR_pair}}, \code{\link{generate_drug_history}}
 #' @export
-generate_patient <- function(simulation_time = 100,
-                             n_drug_ADR_pairs = 50,
-                             risk_model = rep("risk_model_current_use()", n_drug_ADR_pairs),
-                             min_chance_drug = rep(.1, n_drug_ADR_pairs),
-                             avg_duration = rep(5, n_drug_ADR_pairs),
-                             max_chance_drug = rep(NULL, n_drug_ADR_pairs),
-                             guaranteed_exposed = rep(TRUE, n_drug_ADR_pairs),
-                             min_chance = rep(.1, n_drug_ADR_pairs),
-                             max_chance = rep(.4, n_drug_ADR_pairs)) {
+generate_patient <- function(
+  simulation_time = 100,
+  n_drug_ADR_pairs = 50,
+  risk_model = rep("risk_model_current_use()", n_drug_ADR_pairs),
+  min_chance_drug = rep(.1, n_drug_ADR_pairs),
+  avg_duration = rep(5, n_drug_ADR_pairs),
+  max_chance_drug = rep(NULL, n_drug_ADR_pairs),
+  guaranteed_exposed = rep(TRUE, n_drug_ADR_pairs),
+  min_chance = rep(.1, n_drug_ADR_pairs),
+  max_chance = rep(.4, n_drug_ADR_pairs)
+) {
   res <- lapply(1:n_drug_ADR_pairs, function(i) {
     generate_drug_ADR_pair(
       simulation_time = simulation_time,

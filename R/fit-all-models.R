@@ -1,30 +1,34 @@
 #' @export
 #' @rdname fit_model
+#' @param models Character vector of model names to fit.
 #' @param parameters Passed to [fit_model()]
 #' @param mc.cores Number of cores used for parallelization
 fit_all_models <- function(
-    cohort,
-    models = c(
-      "no-association",
-      "current-use",
-      "past-use",
-      "withdrawal",
-      "delayed",
-      "decaying",
-      "delayed+decaying",
-      "long-term"
-    ),
-    zero_patients = 0,
-    zero_timepoints = 0,
-    method = c(
-      "L-BFGS-B", "Nelder-Mead", "BFGS", "CG", "SANN",
-      "Brent"
-    ),
-    maxiter = 1000,
-    parameters = list(),
-    mc.cores = 1
+  cohort,
+  models = c(
+    "no-association",
+    "current-use",
+    "past-use",
+    "withdrawal",
+    "delayed",
+    "decaying",
+    "delayed+decaying",
+    "long-term"
+  ),
+  zero_patients = 0,
+  zero_timepoints = 0,
+  method = c(
+    "L-BFGS-B",
+    "Nelder-Mead",
+    "BFGS",
+    "CG",
+    "SANN",
+    "Brent"
+  ),
+  maxiter = 1000,
+  parameters = list(),
+  mc.cores = 1
 ) {
-
   run_parallel <- FALSE
 
   if (mc.cores > 1) {
@@ -34,8 +38,9 @@ fit_all_models <- function(
       require(dplyr)
       require(expard)
     })
-    parallel::parallelclusterExport(
-      cluster, c("pair", "models", "method", "maxiter", "parameters"),
+    parallel::clusterExport(
+      cluster,
+      c("cohort", "models", "method", "maxiter", "parameters"),
       envir = environment()
     )
 
@@ -44,7 +49,15 @@ fit_all_models <- function(
 
   fit_model_local_function <- function(model) {
     cat(sprintf("Fitting model %s...\n", model))
-    fit_model(cohort, model, zero_patients, zero_timepoints, method, maxiter, parameters)
+    fit_model(
+      cohort,
+      model,
+      zero_patients,
+      zero_timepoints,
+      method,
+      maxiter,
+      parameters
+    )
   }
 
   if (run_parallel) {
@@ -60,12 +73,28 @@ fit_all_models <- function(
 
     res_temp <- parallel::parLapply(cluster, models, function(model) {
       cat(sprintf("Fitting model %s...\n", model))
-      fit_model(cohort, model, zero_patients, zero_timepoints, method, maxiter, parameters)
+      fit_model(
+        cohort,
+        model,
+        zero_patients,
+        zero_timepoints,
+        method,
+        maxiter,
+        parameters
+      )
     }) # fit_model_local_function(model))
   } else {
     res_temp <- lapply(models, function(model) {
       cat(sprintf("Fitting model %s...\n", model))
-      fit_model(cohort, model, zero_patients, zero_timepoints, method, maxiter, parameters)
+      fit_model(
+        cohort,
+        model,
+        zero_patients,
+        zero_timepoints,
+        method,
+        maxiter,
+        parameters
+      )
     }) # fit_model_local_function(model))
   }
   if (run_parallel) {
@@ -99,5 +128,5 @@ fit_all_models <- function(
 
   r |>
     dplyr::full_join(res) |>
-    dplyr::arrange(dplyr::desc(posterior))
+    dplyr::arrange(dplyr::desc(.data$posterior))
 }

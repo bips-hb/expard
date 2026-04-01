@@ -123,11 +123,10 @@ is a sigmoid function.
 }
 \examples{
 drug_history <- c(1, 0, 1, 0, 0)
-risk_model <- risk_model_no_effect()
-risk_model()
-# -> 0
+risk_model <- risk_model_no_association()
+risk_model(drug_history)
 drug_history <- c(1, 0, 1, 0, 0)
-risk_model <- risk_model_withdrawal(rate = 3)
+risk_model <- risk_model_current_use()
 risk_model(drug_history)
 drug_history <- c(1, 0, 1, 0, 0)
 
@@ -135,7 +134,7 @@ risk_model <- risk_model_past(past = 2)
 risk_model(drug_history)
 drug_history <- c(1, 0, 1, 0, 0)
 
-risk_model <- risk_model_withdrawal(rate = 1.2)
+risk_model <- risk_model_duration(duration = 2)
 risk_model(drug_history)
 drug_history <- c(1, 0, 1, 0, 0)
 
@@ -151,7 +150,7 @@ risk_model <- risk_model_decaying(rate = 1.2)
 risk_model(drug_history)
 drug_history <- c(1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1)
 
-risk_model <- risk_model_long_time_after(rate = .5, delay = 9)
+risk_model <- risk_model_long_term(rate = .5, delay = 9)
 risk_model(drug_history)
 }
 \concept{Risk models}

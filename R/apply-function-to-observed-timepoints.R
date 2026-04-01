@@ -12,8 +12,9 @@
 #'         are denoted by \code{NA}
 #' @export
 apply_function_to_observed_timepoints <- function(
-    drug_history,
-    fn = expard::risk_model_current_use()) {
+  drug_history,
+  fn = expard::risk_model_current_use()
+) {
   simulation_time <- length(drug_history)
 
   # determine the indices that are not NA

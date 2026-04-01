@@ -23,7 +23,7 @@
 #' @param fill Color used for the shaded area (Default: `black`)
 #' @param alpha Alpha value for shaded area (Default: `.3`)
 #'
-#' @return A [ggplot2] plot
+#' @return A [ggplot2::ggplot()] plot
 #' @examples
 #' drug_history <- c(rep(0, 4), rep(1, 6), rep(0, 10))
 #' risk_model <- risk_model_withdrawal(rate = 3)
@@ -36,16 +36,15 @@
 #' p
 #' @export
 plot_risk <- function(
-    drug_history = c(rep(0, 4), rep(1, 6), rep(0, 10)),
-    risk_model = risk_model_decaying(3),
-    simulation_time = NULL,
-    title = "",
-    ylim = c(0, 1),
-    shaded_area = TRUE,
-    fill = "black",
-    alpha = 0.3
+  drug_history = c(rep(0, 4), rep(1, 6), rep(0, 10)),
+  risk_model = risk_model_decaying(3),
+  simulation_time = NULL,
+  title = "",
+  ylim = c(0, 1),
+  shaded_area = TRUE,
+  fill = "black",
+  alpha = 0.3
 ) {
-
   if (!is.null(simulation_time)) {
     if (simulation_time < 10) {
       stop("simulation time must be at least 10")
@@ -84,7 +83,10 @@ plot_risk <- function(
   # plot the risk over time
   p <- ggplot2::ggplot() +
     ggplot2::geom_point(data = xdf, mapping = ggplot2::aes(x = t, y = risks)) +
-    ggplot2::scale_x_continuous(limits = c(0.45, length(drug_history) + .55), expand = c(0, 0)) +
+    ggplot2::scale_x_continuous(
+      limits = c(0.45, length(drug_history) + .55),
+      expand = c(0, 0)
+    ) +
     ggplot2::scale_y_continuous(limits = c(0, 1), expand = c(.01, .01)) +
     ggplot2::labs(
       title = title,
@@ -105,18 +107,24 @@ plot_risk <- function(
       p <- p +
         ggplot2::geom_rect(
           data = temp,
-          ggplot2::aes(xmin = .data$xmin, xmax = .data$xmax, ymin = -Inf, ymax = Inf),
+          ggplot2::aes(
+            xmin = .data$xmin,
+            xmax = .data$xmax,
+            ymin = -Inf,
+            ymax = Inf
+          ),
           alpha = alpha,
           fill = fill
         )
     }
   } else {
-    p <- p + ggplot2::geom_vline(
-      data = change_points,
-      ggplot2::aes(xintercept = changes),
-      linetype = "dashed",
-      color = "red"
-    )
+    p <- p +
+      ggplot2::geom_vline(
+        data = change_points,
+        ggplot2::aes(xintercept = changes),
+        linetype = "dashed",
+        color = "red"
+      )
   }
 
   p <- p +

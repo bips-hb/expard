@@ -18,17 +18,17 @@
 
 #' @export
 generate_cohort <- function(
-    n_patients = 100,
-    simulation_time = 100,
-    n_drug_ADR_pairs = 50,
-    risk_model = rep("risk_model_current_use()", n_drug_ADR_pairs),
-    min_chance_drug = rep(.1, n_drug_ADR_pairs),
-    avg_duration = rep(5, n_drug_ADR_pairs),
-    max_chance_drug = rep(NULL, n_drug_ADR_pairs),
-    prob_guaranteed_exposed = rep(1, n_drug_ADR_pairs),
-    min_chance = rep(.1, n_drug_ADR_pairs),
-    max_chance = rep(.4, n_drug_ADR_pairs),
-    verbose = FALSE
+  n_patients = 100,
+  simulation_time = 100,
+  n_drug_ADR_pairs = 50,
+  risk_model = rep("risk_model_current_use()", n_drug_ADR_pairs),
+  min_chance_drug = rep(.1, n_drug_ADR_pairs),
+  avg_duration = rep(5, n_drug_ADR_pairs),
+  max_chance_drug = rep(NULL, n_drug_ADR_pairs),
+  prob_guaranteed_exposed = rep(1, n_drug_ADR_pairs),
+  min_chance = rep(.1, n_drug_ADR_pairs),
+  max_chance = rep(.4, n_drug_ADR_pairs),
+  verbose = FALSE
 ) {
   if (verbose) {
     cat("Generating the patients...\n")
@@ -59,12 +59,17 @@ generate_cohort <- function(
 
   if (verbose) {
     close(pb)
-    cat("DONE generating the patients...\n\nOrganizing the data into matrices...\n")
+    cat(
+      "DONE generating the patients...\n\nOrganizing the data into matrices...\n"
+    )
     pb <- txtProgressBar(min = 0, max = n_drug_ADR_pairs, style = 3)
   }
 
   res <- lapply(1:n_drug_ADR_pairs, function(i) {
-    drug_history <- matrix(rep(NA, simulation_time * n_patients), nrow = n_patients)
+    drug_history <- matrix(
+      rep(NA, simulation_time * n_patients),
+      nrow = n_patients
+    )
     adr_history <- drug_history
 
     sapply(1:n_patients, function(p) {

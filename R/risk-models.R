@@ -36,9 +36,8 @@ risk_models <- c(
 #' @family Risk models
 #' @examples
 #' drug_history <- c(1, 0, 1, 0, 0)
-#' risk_model <- risk_model_no_effect()
-#' risk_model()
-#' # -> 0
+#' risk_model <- risk_model_no_association()
+#' risk_model(drug_history)
 #' @export
 #' @rdname risk_models
 risk_model_no_association <- function() {
@@ -61,7 +60,7 @@ risk_model_no_association <- function() {
 #' @family Risk models
 #' @examples
 #' drug_history <- c(1, 0, 1, 0, 0)
-#' risk_model <- risk_model_withdrawal(rate = 3)
+#' risk_model <- risk_model_current_use()
 #' risk_model(drug_history)
 #' @export
 #' @rdname risk_models
@@ -136,7 +135,7 @@ risk_model_past <- function(past) {
 #' @examples
 #' drug_history <- c(1, 0, 1, 0, 0)
 #'
-#' risk_model <- risk_model_withdrawal(rate = 1.2)
+#' risk_model <- risk_model_duration(duration = 2)
 #' risk_model(drug_history)
 #' @export
 #' @rdname risk_models
@@ -196,7 +195,6 @@ risk_model_withdrawal <- function(rate) {
       return(rep(0, simulation_time))
     }
 
-
     sapply(1:simulation_time, function(t) {
       # currently exposed or did not take the drug yet
       if (drug_history[t] == 1 || sum(drug_history[1:t]) == 0) {
@@ -244,7 +242,6 @@ risk_model_delayed <- function(mu, sigma) {
       return(rep(0, simulation_time))
     }
 
-
     sapply(1:simulation_time, function(t) {
       # currently exposed or did not take the drug yet
       if (sum(drug_history[1:t]) == 0) {
@@ -284,7 +281,6 @@ risk_model_decaying <- function(rate) {
     if (sum(drug_history) == 0) {
       return(rep(0, simulation_time))
     }
-
 
     sapply(1:simulation_time, function(t) {
       # did not take the drug yet
@@ -357,7 +353,7 @@ risk_model_delayed_decaying <- function(mu, sigma, rate) {
 #' @examples
 #' drug_history <- c(1, 0, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 1)
 #'
-#' risk_model <- risk_model_long_time_after(rate = .5, delay = 9)
+#' risk_model <- risk_model_long_term(rate = .5, delay = 9)
 #' risk_model(drug_history)
 #' @export
 #' @rdname risk_models

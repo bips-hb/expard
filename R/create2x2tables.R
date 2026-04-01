@@ -73,26 +73,31 @@
 #' https://doi.org/10.1177/0962280211403602
 #' @seealso \code{\link{create2x2table}}
 #' @examples
+#' \donttest{
 #' set.seed(1)
 #' cohort <- generate_cohort(n_patients = 200)
 #'
-#' # create the 2x2 contingency table per time-point,
-#' # drug-era and patient:
-#' create2x2table(cohort, method = "time-point")
-#' create2x2table(cohort, method = "drug-era")
-#' create2x2table(cohort, method = "patient")
+#' # create the 2x2 contingency tables for all drug-ADR pairs:
+#' create2x2tables(cohort, method = "time-point")
+#' create2x2tables(cohort, method = "drug-era")
+#' create2x2tables(cohort, method = "patient")
+#' }
 #' @export
-create2x2tables <- function(cohort,
-                            method = c(
-                              "time-point",
-                              "drug-era",
-                              "patient"
-                            ),
-                            verbose = TRUE) {
+create2x2tables <- function(
+  cohort,
+  method = c(
+    "time-point",
+    "drug-era",
+    "patient"
+  ),
+  verbose = TRUE
+) {
   if (!(method[1] %in% c("time-point", "drug-era", "patient"))) {
     stop(sprintf(
       "method should be either '%s', '%s' or '%s'",
-      "time-point", "drug-era", "patient"
+      "time-point",
+      "drug-era",
+      "patient"
     ))
   }
 

@@ -12,11 +12,13 @@
 #'
 #' @return ggplot
 #' @export
-plot_fit <- function(fit,
-                     x_label = "model",
-                     title = "",
-                     y_range = NULL,
-                     past_values = NULL) {
+plot_fit <- function(
+  fit,
+  x_label = "model",
+  title = "",
+  y_range = NULL,
+  past_values = NULL
+) {
   # if one run the fit_all_models in parallel, process the data
   if ("past-use(1)" %in% fit$model) {
     simulation_time <- fit$simulation_time[1]
@@ -34,15 +36,16 @@ plot_fit <- function(fit,
 
   # Use only the 'past-use' models for which the past parameter falls in the given range
   if (!is.null(past_values)) {
-    fit <- fit |> dplyr::filter(model != "past-use" | past %in% past_values)
+    fit <- fit |>
+      dplyr::filter(.data$model != "past-use" | .data$past %in% past_values)
   }
 
   # get the best BIC fit for each model
   best_fit <- fit |>
-    dplyr::group_by(model) |>
+    dplyr::group_by(.data$model) |>
     dplyr::slice_min(.data$BIC) |>
     #dplyr::filter(BIC == min(BIC)) |>
-    dplyr::arrange(past) |>
+    dplyr::arrange(.data$past) |>
     dplyr::filter(dplyr::row_number() == 1) |>
     dplyr::arrange(.data$BIC)
 
@@ -72,7 +75,8 @@ plot_fit <- function(fit,
         x = stats::reorder(.data$model, .data$BIC),
         y = .data$BIC
       ),
-      stat = "identity") +
+      stat = "identity"
+    ) +
     ggplot2::coord_cartesian(ylim = y_range) +
     ggplot2::labs(title = title, x = x_label) +
     # scale_y_continuous(expand = expansion(mult = c(0.1, .1))) + #expand = c(0, 100)) +

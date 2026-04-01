@@ -21,7 +21,11 @@
 #' determine_first_prescription(n_patients = 4, simulation_time = 10, min_chance_drug = 0.1)
 #' # -> [1] 2 3 5 9
 #' @export
-determine_first_prescription <- function(n_patients, simulation_time, min_chance_drug) {
+determine_first_prescription <- function(
+  n_patients,
+  simulation_time,
+  min_chance_drug
+) {
   # check correctness input --------
   if (n_patients < 1) {
     stop("n_patients should be >= 1")

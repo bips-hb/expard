@@ -40,7 +40,7 @@ vertical dashed red lines (Default: \code{TRUE})}
 \item{alpha}{Alpha value for shaded area (Default: \code{.3})}
 }
 \value{
-A \link{ggplot2} plot
+A \code{\link[ggplot2:ggplot]{ggplot2::ggplot()}} plot
 }
 \description{
 Plots the risk function's behavior for
